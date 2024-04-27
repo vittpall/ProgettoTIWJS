@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
     <!-- Link to CSS files -->
     <link rel="stylesheet" href="css/indexstyle.css">
+    <script src="makeCall.js" charset="utf-8" defer></script>
+	<script src="login.js" charset="utf-8" defer></script>
     
 </head>
 <body>
 
-
-<div th:text="${loginError}"></div>
  
-<form action="CheckLogin" method="post">
+<form action="#">
     <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
@@ -22,12 +22,14 @@
         <input type="password" id="password" name="password" required>
     </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button id="loginbutton" type="submit" class="btn btn-primary">Login</button>
+        <p id="loginerror"></p>
     </div>
+    
 </form>
-<div class="registration-link">
-<p>Not a member? <a href="registration.html">Register now</a></p>
-</div>
+    <div class="form-group">
+        <p class="btn btn-success">Not a member? Register Now</p>
+    </div>
 
 </body>
 </html>

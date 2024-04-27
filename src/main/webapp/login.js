@@ -10,16 +10,16 @@
             switch (x.status) {
               case 200://fine
             	sessionStorage.setItem('username', message);
-                window.location.href = "HomeCS.html";
+                window.location.href = "Home.html";
                 break;
               case 400://bad request
-                document.getElementById("errormessage").textContent = message;
+                document.getElementById("loginError").textContent = message;
                 break;
               case 401: // unauthorized
-                  document.getElementById("errormessage").textContent = message;
+                  document.getElementById("loginError").textContent = message;
                   break;
               case 500: // server error
-            	document.getElementById("errormessage").textContent = message;
+            	document.getElementById("loginError").textContent = message;
                 break;
             }
           }
