@@ -1,0 +1,85 @@
+/* General body styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    flex-direction: column; /* Align items in a column */
+}
+
+/* Form styling */
+form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 300px;
+    margin-bottom: 10px; /* Add space between the form and the registration link */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #004494;
+}
+
+/* Link styling */
+a {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Registration link styling */
+.registration-link p {
+    text-align: center; /* Center-align the registration link text */
+}
+
+/* Error message styling */
+/*
+div[th\\:text] {
+    color: #d9534f;
+    background: #ffd2d2;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    display: none; /* Initially hide and show via JavaScript or server-side logic if there are errors 
+} */
