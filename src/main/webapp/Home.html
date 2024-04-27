@@ -1,10 +1,70 @@
 <!DOCTYPE html>
 <html>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!-- Link to CSS files -->
+    <script src="makeCall.js" charset="utf-8" defer></script>
+	<script src="login.js" charset="utf-8" defer></script>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>User Albums</title>
+   <link rel="stylesheet" href="css/homepagestyle.css">
 </head>
 <body>
+    <h1>User Albums</h1>
+    
+    <div>
+        <h2>Your Albums</h2>
+     	<div id="userAlbum">
+	        <ul>
+	            <li>
+	<!-- here will be inserted the data retrieved -->
+	
+	            </li>
+	        </ul>
+        </div>
+    </div>
+    
+	    <h2>Others' Albums</h2>
+	<div id="othersAlbum">
+	    <h3 th:text="${entry.key.username} + '\'s Albums'"></h3>
+	    <ul>
+	        <li>
+	<!-- here will be inserted the data retrieved -->
+	        </li>
+	    </ul>
+	</div>
+    
+    
+    <div id="albumCreationForm">
+        <h2>Album Creation form</h2>
+        <form th:action="#" enctype="multipart/form-data">
+            
+            <input name="title" type="text" required placeholder="Enter album title">
 
+		    <div id="userImages" >
+		    <!-- to show all the images the user has -->
+		        <input type="checkbox" th:value="${image.image_Id}" id="${'image_' + image.image_Id}" name="selectedImages" class="checkbox-custom"/>
+		        <label th:for="${'image_' + image.image_Id}" th:text="${image.title}" class="checkbox-label"></label><br/>
+		    </div>
+
+
+            
+            <input type="text" name="image_title" placeholder="Enter image title">
+            <input type="text" name="description" placeholder="Enter image description">
+            <!-- File input for uploading new image -->
+            <input type="file" name="file">
+        
+            <!-- Submit button for both actions -->
+            <input type="submit" name="action" value="CreateAlbum">
+        </form>
+        <a th:href="Logout">Logout</a>
+    </div>
+    
+    <div id="albumSelected">
+    </div>
+    
+    <div id="imageSelected">
+    </div>
 </body>
 </html>
