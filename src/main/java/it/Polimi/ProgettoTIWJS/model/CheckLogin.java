@@ -28,14 +28,9 @@ public class CheckLogin extends HttpServlet {
     private Connection connection = null;
 
     public void init() throws ServletException {
-        try {
-        	connection = ConnectionHandler.getConnection(getServletContext())
-           
-        } catch (ClassNotFoundException e) {
-            throw new UnavailableException("Can't load database driver");
-        } catch (SQLException e) {
-            throw new UnavailableException("Couldn't get db connection");
-        }
+
+        	connection = ConnectionHandler.getConnection(getServletContext());
+
     }
     
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
