@@ -18,13 +18,12 @@ public class ImageDAO {
         this.con = connection;
     }
 
-    public List<Image> findImagesByAlbum(String albumTitle, int albumCreator, int Offset) throws SQLException {
+    public List<Image> findImagesByAlbum(String albumTitle, int albumCreator) throws SQLException {
         List<Image> images = new ArrayList<>();
-        String query = "SELECT i.Image_id, i.Title, i.System_Path, i.Creation_Date, i.Description FROM `Image` i, Contains_Images c WHERE i.Image_id = c.Image_Id AND c.title = ? AND c.User_Id = ? LIMIT 6 OFFSET ?";
+        String query = "SELECT i.Image_id, i.Title, i.System_Path, i.Creation_Date, i.Description FROM `Image` i, Contains_Images c WHERE i.Image_id = c.Image_Id AND c.title = ? AND c.User_Id = ?";
         try (PreparedStatement pstatement = con.prepareStatement(query);) {
             pstatement.setString(1, albumTitle);
             pstatement.setInt(2, albumCreator);
-            pstatement.setInt(3, Offset);
             try (ResultSet result = pstatement.executeQuery();) {
                 while (result.next()) {
                     Image image = new Image();
