@@ -48,65 +48,55 @@ public class GoToHomePage extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	HttpSession session = request.getSession();
+        
+        HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        List<User> UserList;
-        
+
         String loginpath = getServletContext().getContextPath() + "/index.html";
-        
-		if (session.isNew() || session.getAttribute("user") == null) {
-			response.sendRedirect(loginpath);
-			return;
-		}
-        if (user == null) {
+
+        // Check for session validity
+        if (session.isNew() || user == null) {
             response.sendRedirect(loginpath);
             return;
         }
-        
+
         UserDAO userDao = new UserDAO(connection);
         ImageDAO imageDao = new ImageDAO(connection);
         AlbumDAO albumDao = new AlbumDAO(connection);
-        List<Image> imagesUser = new ArrayList<>();
-        List<Album> UserAlbum = new ArrayList<>();
 
-        Map<User, List<Album>> OtherUserAlbum = new HashMap<>();
-        
         try {
-        	
-        	UserList = userDao.getAllUsers();
-            imagesUser = imageDao.RetrieveAllImagesByUser(user);
-            UserAlbum = albumDao.findAlbumsByUser(user.getUsername());
-            //TODO verify the order of the user inside the userlist, to solve that annoying problem related to refreshing the page
-            for (User u : UserList) {
+            List<User> userList = userDao.getAllUsers(); // Retrieve all users
+            List<Image> imagesUser = imageDao.RetrieveAllImagesByUser(user); // Images for the logged-in user
+            List<Album> userAlbum = albumDao.findAlbumsByUser(user.getUsername()); // Albums for the logged-in user
+            Map<User, List<Album>> otherUserAlbum = new HashMap<>(); // Albums from other users
+
+            // Populate albums for other users
+            for (User u : userList) {
                 if (!u.getUsername().equals(user.getUsername())) {
                     List<Album> albums = albumDao.findAlbumsByUser(u.getUsername());
-                    OtherUserAlbum.put(u, albums);
-                  //  System.out.println("User: " + u.getUsername() + " Albums: " + albums.size()); // Debug statement
+                    otherUserAlbum.put(u, albums);
                 }
             }
+
+            Gson gson = new GsonBuilder()
+                           .setDateFormat("yyyy MMM dd").create();
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("userAlbumJson", userAlbum);
+            responseData.put("imageUserJson", imagesUser);
+            responseData.put("otherUserAlbumJson", otherUserAlbum);
+
+            String jsonResponse = gson.toJson(responseData);
+            
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(jsonResponse);
+
         } catch (SQLException e) {
-        		
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().println("Unable to retrieve albums"+ e.getMessage());
-            return;
-        }	
-        
-    	Gson gson = new GsonBuilder()
-				   .setDateFormat("yyyy MMM dd").create();
-		String userAlbumJson = gson.toJson(UserAlbum);
-		String imageUserJson = gson.toJson(imagesUser);
-		String otherUserAlbumJson = gson.toJson(OtherUserAlbum);
-		
-		
-		//pass the json to js
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(userAlbumJson);
-		response.getWriter().write(imageUserJson);
-		response.getWriter().write(otherUserAlbumJson);
-        
+            response.getWriter().println("Unable to retrieve albums: " + e.getMessage());
+        }
     }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);

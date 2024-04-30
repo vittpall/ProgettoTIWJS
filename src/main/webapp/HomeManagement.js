@@ -15,7 +15,7 @@ window.addEventListener("load", () =>
 	}
 }, false);
 
-function userWelcomeMessage(username, usernameContainer)
+function UserWelcomeMessage(username, usernameContainer)
 {
 	this.username = username;
 	this.show = function()
@@ -49,17 +49,19 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		makeCall("GET", "GoToHomePage", null, function(req)
 		{
 			if(req.readyState == 4)
-			{
+			{	
+				var userAlbumToShow, otherAlbumToShow, imageUserToShow;
 				if(req.status == 200)
 				{
-					var responseData = JSON.parse(req.responseText);
-					var userAlbumToShow = responseData.userAlbumJson;
-					var otherAlbumToShow = responseData.imageUserJson;
-					var imageUserToShow = responseData.otherUserAlbumJson;
+					var responseData = JSON.parse(req.responseText);  // Ensure response is parsed as JSON
+                	console.log("Response Data:", responseData);
+					userAlbumToShow = responseData.userAlbumJson;
+					otherAlbumToShow = responseData.imageUserJson;
+					imageUserToShow = responseData.otherUserAlbumJson;
 				}
-				self.updateAlbum(userAlbumToShow, this.userAlbum);
-				self.updateAlbum(otherAlbumToShow, this.otherAlbum);
-				self.showAlbumForm(imageUserToShow);
+				self.updateAlbum(userAlbumToShow, self.userAlbum);
+				self.updateAlbum(otherAlbumToShow, self.otherAlbum);
+				self.showAlbumForm(false);
 			}
 			else if (req.status == 403)
 			{
@@ -69,16 +71,15 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		}, true);
 	}
 	
-	this.updateAlbum = function(albumToShow, idListContainer)
+	this.updateAlbum = function(albumToShow, listContainer)
 	{
-	    var listContainer = document.getElementById(idListContainer);
+	  //  var listContainer = document.getElementById(idListContainer);
 	        listContainer.innerHTML = "";
 	
 	
 	    	albumToShow.forEach(function(album) {
 	
 		        var listItem = document.createElement("li");
-		
 		        var anchor = document.createElement("a");
 		        anchor.href = "#"; 
 		        anchor.textContent = album.title;
@@ -94,13 +95,11 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	}
 
 	//we can reuse the function to cover the form just in case
-	this.showAlbumForm(imageToShow, hide)
+	this.showAlbumForm = function(hide)
 	{
+		console.log('hide value:', hide); 
 		let albumForm = document.getElementById("albumCreationForm");
-		if(hide)
-			albumForm.style.visibility = "hidden";
-		else
-			albumForm.style.visibility = "visible";
+		albumForm.style.visibility = hide ? "hidden" : "visible";
 	}
 	
 	//autoclick on the first album of the user
@@ -147,7 +146,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	
 }
 
-function selectedAlbum()
+function SelectedAlbum()
 {
 	this.show = function()
 	{
@@ -249,14 +248,14 @@ function PageOrchestrator()
 {
 	//initi the different parts of the page
 	this.start = function(){
-		allAlbumToShow = new AllAlbumToShow();
+		allAlbumToShow = new AllAlbumToShow(alert, document.getElementById('userAlbumContainer'), document.getElementById('otherAlbumContainer'), document.getElementById('addAlbumForm'));
 		allAlbumToShow.show();
 		
-		userAlbum = new UserAlbum()
-		otherAlbum = new OtherAlbum()
+	//	userAlbum = new UserAlbum();
+	//	otherAlbum = new OtherAlbum();
 		// i want to retrieve al the information from the selectedAlbum
-		albumCreationForm = new albumCreationForm()
-		selectedAlbum = new SelectedImage()
+	//	albumCreationForm = new albumCreationForm();
+	//	selectedAlbum = new SelectedImage();
 	}
 	
 	this.refresh = function(albumTitle){
@@ -265,9 +264,114 @@ function PageOrchestrator()
 	}
 	
 }
+/*
+function UserAlbum() {
+    this.show = function() {
+        var self = this;
+        makeCall("GET", "GetUserAlbums", null, function(req) {
+            if(req.readyState == 4) {
+                var message = req.responseText;
+                if(req.status == 200) {
+                    var responseData = JSON.parse(req.responseText);
+                    var userAlbums = responseData.userAlbums;
+                    self.update(userAlbums);
+                } else if (req.status == 403) {
+                    window.location.href = "index.html";
+                    window.sessionStorage.removeItem('username');
+                }
+            }
+        });
+    }
 
-function UserAlbum()
-{
-	makeCall("GET", "")
+    this.update = function(albums) {
+        var albumContainer = document.getElementById('userAlbumContainer');
+        albumContainer.innerHTML = '';
+        albums.forEach(function(album) {
+            var listItem = document.createElement("li");
+            var anchor = document.createElement("a");
+            anchor.href = "#";
+            anchor.textContent = album.title;
+            anchor.setAttribute("albumTitle", album.title)
+            anchor.addEventListener("click", function() {
+                selectedAlbum.show(album.title);
+            });
+
+            listItem.appendChild(anchor);
+            albumContainer.appendChild(listItem);
+        });
+    }
 }
 
+function OtherAlbum() {
+	this.show = function() {
+		var self = this;
+		makeCall("GET", "GetOtherAlbums", null, function(req) {
+			if(req.readyState == 4) {
+				var message = req.responseText;
+				if(req.status == 200) {
+					var responseData = JSON.parse(req.responseText);
+					var otherAlbums = responseData.otherAlbums;
+					self.update(otherAlbums);
+				} else if (req.status == 403) {
+					window.location.href = "index.html";
+					window.sessionStorage.removeItem('username');
+				}
+			}
+		});
+	}
+
+	this.update = function(albums) {
+		var albumContainer = document.getElementById('otherAlbumContainer');
+		albumContainer.innerHTML = '';
+		albums.forEach(function(album) {
+			var listItem = document.createElement("li");
+			var anchor = document.createElement("a");
+			anchor.href = "#";
+			anchor.textContent = album.title;
+			anchor.setAttribute("albumTitle", album.title)
+			anchor.addEventListener("click", function() {
+				selectedAlbum.show(album.title);
+			});
+
+			listItem.appendChild(anchor);
+			albumContainer.appendChild(listItem);
+		});
+	}
+}
+function OtherUserAlbum() {
+    this.show = function() {
+        var self = this;
+        makeCall("GET", "GetOtherUserAlbums", null, function(req) {
+            if(req.readyState == 4) {
+                var message = req.responseText;
+                if(req.status == 200) {
+                    var responseData = JSON.parse(req.responseText);
+                    var otherUserAlbums = responseData.otherUserAlbums;
+                    self.update(otherUserAlbums);
+                } else if (req.status == 403) {
+                    window.location.href = "index.html";
+                    window.sessionStorage.removeItem('username');
+                }
+            }
+        });
+    }
+
+    this.update = function(albums) {
+        var albumContainer = document.getElementById('otherAlbumContainer');
+        albumContainer.innerHTML = '';
+        albums.forEach(function(album) {
+            var listItem = document.createElement("li");
+            var anchor = document.createElement("a");
+            anchor.href = "#";
+            anchor.textContent = album.title;
+            anchor.setAttribute("albumTitle", album.title)
+            anchor.addEventListener("click", function() {
+                selectedAlbum.show(album.title);
+            });
+
+            listItem.appendChild(anchor);
+            albumContainer.appendChild(listItem);
+        });
+    }
+}
+*/
