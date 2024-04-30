@@ -74,6 +74,11 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	this.updateAlbum = function(albumToShow, listContainer)
 	{
 	  //  var listContainer = document.getElementById(idListContainer);
+	  if (!Array.isArray(albumToShow) || albumToShow.length === 0) {
+        console.log('No albums to display');
+        listContainer.innerHTML = "<p>No albums available.</p>"; // Provide feedback
+        return;
+    }
 	        listContainer.innerHTML = "";
 	
 	
@@ -82,10 +87,10 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		        var listItem = document.createElement("li");
 		        var anchor = document.createElement("a");
 		        anchor.href = "#"; 
-		        anchor.textContent = album.title;
-		        anchor.setAttribute("albumTitle", album.title)
+		        anchor.textContent = album.Title;
+		        anchor.setAttribute("albumTitle", album.Title)
 		        anchor.addEventListener("click", function() {
-					selectedAlbum.show(album.title);
+					selectedAlbum.show(album.Title);
 	        });
 	
 	        listItem.appendChild(anchor);
@@ -97,7 +102,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	//we can reuse the function to cover the form just in case
 	this.showAlbumForm = function(hide)
 	{
-		console.log('hide value:', hide); 
+		//console.log('hide value:', hide); 
 		let albumForm = document.getElementById("albumCreationForm");
 		albumForm.style.visibility = hide ? "hidden" : "visible";
 	}
