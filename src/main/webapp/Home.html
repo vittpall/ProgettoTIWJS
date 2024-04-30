@@ -1,75 +1,50 @@
 <!DOCTYPE html>
-<html>
-    
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Album and Image Manager</title>
-    <!-- Link to CSS files -->
-    <script src="makeCall.js" charset="utf-8" defer></script>
-	<script src="login.js" charset="utf-8" defer></script>
-	<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/dist/sortable.min.js"></script>
-	<script src="app.js defer"></script>
-    <title>User Albums</title>
-   <link rel="stylesheet" href="css/homepagestyle.css">
+    <!--  <link rel="stylesheet" href="styles.css"> <!-- Update this to your actual CSS file path -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/dist/sortable.min.js"></script>
+    <script src="makeCall.js" charset="utf-8" defer></script> <!-- General AJAX utility -->
+    <script src="HomeManagement.js" defer></script> <!-- Your main JavaScript managing albums and images -->
 </head>
 <body>
-    <h1>
-    	<div id="usernameContainer">
-    	</div>
-    </h1>
-    
-    <div>
-        <h2>Your Albums</h2>
-     	<div id="userAlbum">
-	        <ul>
-	            <li>
-	<!-- here will be inserted the data retrieved -->
-	
-	            </li>
-	        </ul>
-        </div>
-    </div>
-    
-	    <h2>Others' Albums</h2>
-	<div id="othersAlbum">
-	    <h3 th:text="${entry.key.username} + '\'s Albums'"></h3>
-	    <ul>
-	        <li>
-	<!-- here will be inserted the data retrieved -->
-	        </li>
-	    </ul>
-	</div>
-    
-    
-    <div id="albumCreationForm">
-        <h2>Album Creation form</h2>
-        <form th:action="#" enctype="multipart/form-data">
-            
-            <input name="title" type="text" required placeholder="Enter album title">
+    <header>
+        <div id="usernameContainer">Welcome, user!</div> <!-- Container for user welcome message -->
+        <a href="index.html" id="logoutLink">Logout</a>
+    </header>
 
-		    <div id="userImages" >
-		    <!-- to show all the images the user has -->
-		        <input type="checkbox" th:value="${image.image_Id}" id="${'image_' + image.image_Id}" name="selectedImages" class="checkbox-custom"/>
-		        <label th:for="${'image_' + image.image_Id}" th:text="${image.title}" class="checkbox-label"></label><br/>
-		    </div>
+    <main>
+        <h1>Welcome to the Album and Image Manager</h1>
+        <div id="alertContainer" class="alert"></div> <!-- Placeholder for alerts -->
 
+        <section id="albumSection">
+            <div id="userAlbumContainer" class="albums">
+                <h2>Your Albums</h2>
+                <ul></ul> <!-- List container for user albums -->
+            </div>
+            <div id="otherAlbumContainer" class="albums">
+                <h2>Others' Albums</h2>
+                <ul></ul> <!-- List container for other users' albums -->
+            </div>
+            <div id="albumCreationForm" style="visibility:hidden;">
+                <form id="createAlbumForm">
+                    <input type="text" name="title" placeholder="Album Title" required>
+                    <input type="file" name="image" multiple>
+                    <textarea name="description" placeholder="Description"></textarea>
+                    <button type="submit">Create Album</button>
+                </form>
+            </div>
+        </section>
 
-            
-            <input type="text" name="image_title" placeholder="Enter image title">
-            <input type="text" name="description" placeholder="Enter image description">
-            <!-- File input for uploading new image -->
-            <input type="file" name="file">
-        
-            <!-- Submit button for both actions -->
-            <input type="submit" name="action" value="CreateAlbum">
-        </form>
-        <a th:href="Logout">Logout</a>
-    </div>
+        <section id="imageDetailsSection" style="display:none;">
+            <div id="photoContainer"></div> <!-- Container for photos -->
+            <div id="commentsContainer"></div> <!-- Container for comments -->
+            <button id="prevButton" disabled>Previous</button>
+            <button id="nextButton" disabled>Next</button>
+        </section>
+    </main>
+
     
-    <div id="albumSelected">
-    </div>
-    
-    <div id="imageSelected">
-    </div>
 </body>
 </html>

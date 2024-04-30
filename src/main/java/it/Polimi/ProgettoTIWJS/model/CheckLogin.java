@@ -1,5 +1,6 @@
 package it.Polimi.ProgettoTIWJS.model;
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 
 import javax.servlet.http.HttpServlet;
@@ -23,6 +24,7 @@ import it.Polimi.ProgettoTIWJS.dao.UserDAO;
 import it.Polimi.ProgettoTIWJS.Utils.ConnectionHandler;
 
 @WebServlet("/CheckLogin")
+@MultipartConfig
 public class CheckLogin extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
@@ -38,7 +40,7 @@ public class CheckLogin extends HttpServlet {
         String usrn = null;
         String pwd = null;
 		usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
-		pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
+		pwd = StringEscapeUtils.escapeJava(request.getParameter("password"));
         HttpSession session = request.getSession(); 
 
         if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
