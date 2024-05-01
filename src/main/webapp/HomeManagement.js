@@ -155,7 +155,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 
 function SelectedAlbum()
 {
-	var photos = {};
+	//var photos = {};
 	this.show = function(albumTitle, albumCreator)
 	{
 		var self = this;
@@ -170,10 +170,12 @@ function SelectedAlbum()
 				{
 					responseData = JSON.parse(req.responseText);
 					console.log("Response Data:", responseData);
-					var albumCommentHashMap = responseData.albumCommentHashMap;
+					
+                    // Clear the photos object before populating it with new data
+                    
 					
 				}
-				self.update(albumCommentHashMap, 0);
+				self.update(responseData);
 				
 			} else if (req.status == 403)
 			{
@@ -187,34 +189,52 @@ function SelectedAlbum()
 	{
 	    const photoContainer = document.getElementById('photoContainer');
 	    const commentsContainer = document.getElementById('commentsContainer');
-	    const photoKeys = Object.keys(photos);
 	    photoContainer.innerHTML = '';
 	    commentsContainer.innerHTML = '';
-	
-	    for (let i = startIndex; i < startIndex + 5 && i < photoKeys.length; i++) {
-	        const photoKey = photoKeys[i];
+		/*
+	    for (let i = startIndex; i < startIndex + 5 && i < imagesCommentToShow.length; i++) {
+	       	const image = imagesCommentToShow[i];
 	        const photoElement = document.createElement('img');
-	        photoElement.src = photoKey;
-	        photoElement.classList.add('photo');
-	        photoElement.addEventListener('click', () => {
-	            displayComments(photoKey);
-	        });
-	        photoContainer.appendChild(photoElement);
-	    }
+            photoElement.src = image.System_Path;
+            photoElement.classList.add('photo');
+            photoElement.addEventListener('click', () => {
+                displayComments(image.Image_Id);
+            });
+            photoContainer.appendChild(photoElement);
+	        
+	    } */
+	    for (let key in imagesCommentToShow) {
+            if (imagesCommentToShow.hasOwnProperty(key)) {
+                const image = imagesCommentToShow[key];
+                const photoElement = document.createElement('img');
+                
+                console.log(image.System_Path);
+                photoElement.src = 'http://localhost:8080ProgettoTIWJS/Home.html' + image.System_Path;
+                console.log(photoElement.src);
+                photoElement.classList.add('photo');
+                photoElement.addEventListener('click', () => {
+                    displayComments(image.Image_Id);
+                });
+                photoContainer.appendChild(photoElement);
+            }
+        }
 	
 	    const prevButton = document.getElementById('prevButton');
 	    const nextButton = document.getElementById('nextButton');
 	    prevButton.disabled = startIndex === 0;
-	    nextButton.disabled = startIndex + 5 >= photoKeys.length;
+	   // nextButton.disabled = startIndex + 5 >= imagesCommentToShow.length;
+	    nextButton.disabled = startIndex + 5 >= Object.keys(imagesCommentToShow).length;
 	
 	    prevButton.addEventListener('click', () => {
 	        if (startIndex > 0) {
-	            displayPhotos(startIndex - 5);
+	           // displayPhotos(startIndex - 5);
+	            self.update(imagesCommentToShow, startIndex - 5); // Use self.update to recursively call update function
 	        }
 	    });
 	    nextButton.addEventListener('click', () => {
-	        if (startIndex + 5 < photoKeys.length) {
-	            displayPhotos(startIndex + 5);
+	        if (startIndex + 5 < Object.keys(imagesCommentToShow).length) {
+	           // displayPhotos(startIndex + 5);
+	            self.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
 	        }
 	    });
 }

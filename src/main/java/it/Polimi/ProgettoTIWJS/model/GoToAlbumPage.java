@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/GoToAlbumPage")
 public class GoToAlbumPage extends HttpServlet {
@@ -66,13 +67,14 @@ public class GoToAlbumPage extends HttpServlet {
         try { 	
             images = imageDao.findImagesByAlbum(AlbumTitle, idAlbumCreator);
             System.out.println(images.size());
+            
         } catch (SQLException e) {
         	e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
             return;
         }
-        
+        /*
         HashMap<Image, List<Comment>> albumCommentHashMap = new HashMap<>();
         CommentDAO commentDao = new CommentDAO(connection);
         List<Comment> comments = null;
@@ -84,15 +86,46 @@ public class GoToAlbumPage extends HttpServlet {
                 comments = commentDao.findCommentsByImage(image.getImage_Id());
                 albumCommentHashMap.put(image, comments);
         	}
+        	// Print the HashMap
+        	for (Map.Entry<Image, List<Comment>> entry : albumCommentHashMap.entrySet()) {
+                Image image = entry.getKey();
+                List<Comment> imageComments = entry.getValue();
+                System.out.println("Image: " + image.getSystem_Path() + ", Comments: " + imageComments.size());
+            }
         } catch (SQLException e)
         {
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
         }
-        
+        */
+     // Create a map to hold image details and associated comments
+        Map<Object, List> albumData = new HashMap<>();
+        CommentDAO commentDao = new CommentDAO(connection);
+        try {
+        for (Image image : images) {
+            // Fetch comments associated with the image
+            List<Comment> comments = commentDao.findCommentsByImage(image.getImage_Id());
+            // Create a map to hold image details including system path
+            Map<String, Object> imageData = new HashMap<>();
+            imageData.put("Image_Id", image.getImage_Id());
+            imageData.put("Title", image.getTitle());
+            imageData.put("Creation_Date", image.getCreation_Date());
+            imageData.put("Description", image.getDescription());
+            imageData.put("System_Path", image.getSystem_Path()); // Include the system path
+            // Add image details and associated comments to the map
+            albumData.put(imageData, comments);
+        } }catch (SQLException e)
+        {
+        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
+        }
+
+        // Convert the map to JSON
+        String jsonResponse = new Gson().toJson(albumData);
+
     	Gson gson = new GsonBuilder()
 				   .setDateFormat("yyyy MMM dd").create();
-		String albumCommentHashMapJson = gson.toJson(albumCommentHashMap);
+		String albumCommentHashMapJson = gson.toJson(albumData);
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
