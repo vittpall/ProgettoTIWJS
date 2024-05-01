@@ -56,8 +56,8 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 					var responseData = JSON.parse(req.responseText);  // Ensure response is parsed as JSON
                 	console.log("Response Data:", responseData);
 					userAlbumToShow = responseData.userAlbumJson;
-					otherAlbumToShow = responseData.imageUserJson;
-					imageUserToShow = responseData.otherUserAlbumJson;
+					otherAlbumToShow = responseData.otherUserAlbumJson;
+					//imageUserToShow = responseData.imageUserJson;
 				}
 				self.updateAlbum(userAlbumToShow, self.userAlbum);
 				self.updateAlbum(otherAlbumToShow, self.otherAlbum);
@@ -69,8 +69,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 				windows.sessionStorage.removeItem('username');
 			}
 		}, true);
-	}
-	
+	} 
 	this.updateAlbum = function(albumToShow, listContainer)
 	{
 	  //  var listContainer = document.getElementById(idListContainer);
@@ -117,7 +116,10 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	    var anchorToClick = (albumTitleToShow) ? document.querySelector(selector) : this.userAlbum.querySelectorAll("a")[0];
 	    if (anchorToClick) anchorToClick.dispatchEvent(e);
 	}
-	
+	this.refreshAlbums = function() {
+        this.show();
+    }
+    /*
 	this.updateAfterNewAlbum = function(orchestrator)
 	{
 		this.addAlbumForm.querySelector("input[type='button']").addEventListener('click', (e) =>
@@ -131,7 +133,8 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 					if(req.readyState == 4){
 						var message = req.responseText;
 						if(req.status == 200){
-							orchestrator.refresh(albumTitle);
+							//orchestrator.refresh(albumTitle);
+							allAlbumToShow.refreshAlbums();
 						}
 						else if (req.status == 403)
 						{
@@ -148,8 +151,21 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 				form.reportValidity();
 			}
 		})
-	}
-	
+	} */
+	document.getElementById('createAlbumForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        makeCall('POST', 'CreateAlbum', this, function(req) {
+            if (req.readyState === XMLHttpRequest.DONE) {
+                var message = req.responseText;
+                if (req.status === 200) {
+                    console.log('Album created successfully');
+                    allAlbumToShow.refreshAlbums(); // Refresh the list of albums
+                } else {
+                    alert('Error creating album: ' + message);
+                }
+            }
+        });
+    });
 	
 }
 
@@ -277,7 +293,9 @@ function PageOrchestrator()
 {
 	//initi the different parts of the page
 	this.start = function(){
-		allAlbumToShow = new AllAlbumToShow(alert, document.getElementById('userAlbumContainer'), document.getElementById('otherAlbumContainer'), document.getElementById('addAlbumForm'));
+		userWelcomeMessage = new UserWelcomeMessage(sessionStorage.getItem('username'), document.getElementById('usernameContainer'));
+        userWelcomeMessage.show();
+		allAlbumToShow = new AllAlbumToShow(document.getElementById('alertContainer'), document.getElementById('userAlbumContainer'), document.getElementById('otherAlbumContainer'), document.getElementById('addAlbumForm'));
 		allAlbumToShow.show();
 		
 	//	userAlbum = new UserAlbum();
@@ -290,6 +308,7 @@ function PageOrchestrator()
 	this.refresh = function(albumTitle){
 		allAlbumToShow.show();
 		allAlbumToShow.autoclick(albumTitle);
+		allAlbumToShow.refreshAlbums();
 	}
 	
 }
