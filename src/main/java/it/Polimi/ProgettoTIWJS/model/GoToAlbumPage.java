@@ -55,7 +55,7 @@ public class GoToAlbumPage extends HttpServlet {
         List<Image> images;
         int idAlbumCreator;
         
-        try {
+        try { 
             idAlbumCreator = Integer.parseInt(AlbumCreator);
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -67,6 +67,7 @@ public class GoToAlbumPage extends HttpServlet {
             images = imageDao.findImagesByAlbum(AlbumTitle, idAlbumCreator);
             System.out.println(images.size());
         } catch (SQLException e) {
+        	e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
             return;
@@ -88,7 +89,7 @@ public class GoToAlbumPage extends HttpServlet {
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
         }
-
+        
     	Gson gson = new GsonBuilder()
 				   .setDateFormat("yyyy MMM dd").create();
 		String albumCommentHashMapJson = gson.toJson(albumCommentHashMap);

@@ -88,9 +88,11 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		        var anchor = document.createElement("a");
 		        anchor.href = "#"; 
 		        anchor.textContent = album.Title;
-		        anchor.setAttribute("albumTitle", album.Title)
+		        anchor.setAttribute("albumTitle", album.Title);
+		        var albumCreator = album.User_id;
 		        anchor.addEventListener("click", function() {
-					selectedAlbum.show(album.Title);
+		        	console.log("Album Creator:", album.User_id); 
+					selectedAlbum.show(album.Title, album.User_id);
 	        });
 	
 	        listItem.appendChild(anchor);
@@ -153,11 +155,12 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 
 function SelectedAlbum()
 {
-	this.show = function()
+	var photos = {};
+	this.show = function(albumTitle, albumCreator)
 	{
 		var self = this;
 		//to retrieve all the album's images and comments related to the them
-		makeCall("GET", "GoToAlbumPage", null,
+		makeCall("GET", "GoToAlbumPage?albumTitle=" + encodeURIComponent(albumTitle)+ "&albumCreator=" + encodeURIComponent(albumCreator), null,
 		function(req)
 		{
 			if(req.readyState == 4)
@@ -165,7 +168,8 @@ function SelectedAlbum()
 				var message = req.responseText;
 				if(req.status == 200)
 				{
-					var responseData = JSON.parse(req.responseText);
+					responseData = JSON.parse(req.responseText);
+					console.log("Response Data:", responseData);
 					var albumCommentHashMap = responseData.albumCommentHashMap;
 					
 				}
@@ -260,7 +264,7 @@ function PageOrchestrator()
 	//	otherAlbum = new OtherAlbum();
 		// i want to retrieve al the information from the selectedAlbum
 	//	albumCreationForm = new albumCreationForm();
-	//	selectedAlbum = new SelectedImage();
+		selectedAlbum = new SelectedAlbum();
 	}
 	
 	this.refresh = function(albumTitle){
