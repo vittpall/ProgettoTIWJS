@@ -74,7 +74,7 @@ public class GoToAlbumPage extends HttpServlet {
             response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
             return;
         }
-        /*
+        
         HashMap<Image, List<Comment>> albumCommentHashMap = new HashMap<>();
         CommentDAO commentDao = new CommentDAO(connection);
         List<Comment> comments = null;
@@ -97,8 +97,8 @@ public class GoToAlbumPage extends HttpServlet {
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
         }
-        */
-     // Create a map to hold image details and associated comments
+        
+     /* Create a map to hold image details and associated comments
         Map<Object, List> albumData = new HashMap<>();
         CommentDAO commentDao = new CommentDAO(connection);
         try {
@@ -118,14 +118,14 @@ public class GoToAlbumPage extends HttpServlet {
         {
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
-        }
+        } */
 
         // Convert the map to JSON
-        String jsonResponse = new Gson().toJson(albumData);
+        String jsonResponse = new Gson().toJson(albumCommentHashMap);
 
     	Gson gson = new GsonBuilder()
 				   .setDateFormat("yyyy MMM dd").create();
-		String albumCommentHashMapJson = gson.toJson(albumData);
+		String albumCommentHashMapJson = gson.toJson(albumCommentHashMap);
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

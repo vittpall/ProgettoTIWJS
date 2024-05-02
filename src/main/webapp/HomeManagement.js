@@ -20,7 +20,7 @@ function UserWelcomeMessage(username, usernameContainer)
 	this.username = username;
 	this.show = function()
 	{
-		usernameContainer.textContent = this.username + "'s albums";
+		usernameContainer.textContent =  "Welcome user:  " +  this.username ;
 	}
 }
 
@@ -207,7 +207,7 @@ function SelectedAlbum()
 	    const commentsContainer = document.getElementById('commentsContainer');
 	    photoContainer.innerHTML = '';
 	    commentsContainer.innerHTML = '';
-		/*
+		
 	    for (let i = startIndex; i < startIndex + 5 && i < imagesCommentToShow.length; i++) {
 	       	const image = imagesCommentToShow[i];
 	        const photoElement = document.createElement('img');
@@ -218,7 +218,8 @@ function SelectedAlbum()
             });
             photoContainer.appendChild(photoElement);
 	        
-	    } */
+	    } 
+	    /*
 	    for (let key in imagesCommentToShow) {
             if (imagesCommentToShow.hasOwnProperty(key)) {
                 const image = imagesCommentToShow[key];
@@ -234,7 +235,7 @@ function SelectedAlbum()
                 photoContainer.appendChild(photoElement);
             }
         }
-	
+		*/
 	    const prevButton = document.getElementById('prevButton');
 	    const nextButton = document.getElementById('nextButton');
 	    prevButton.disabled = startIndex === 0;
