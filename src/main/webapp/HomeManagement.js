@@ -117,6 +117,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	    if (anchorToClick) anchorToClick.dispatchEvent(e);
 	}
 	this.refreshAlbums = function() {
+		
         this.show();
     }
     /*
@@ -175,6 +176,9 @@ function SelectedAlbum()
 	this.show = function(albumTitle, albumCreator)
 	{
 		var self = this;
+		// Hide album sections and show image details
+        document.getElementById('albumSection').style.display = 'none';
+        document.getElementById('imageDetailsSection').style.display = 'block';
 		//to retrieve all the album's images and comments related to the them
 		makeCall("GET", "GoToAlbumPage?albumTitle=" + encodeURIComponent(albumTitle)+ "&albumCreator=" + encodeURIComponent(albumCreator), null,
 		function(req)
@@ -243,6 +247,7 @@ function SelectedAlbum()
 	        }
 	    });
 }
+
 
 	// Function to display comments for a specific photo
 	function displayComments(photoKey) {
