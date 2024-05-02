@@ -50,7 +50,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		{
 			if(req.readyState == 4)
 			{	
-				var userAlbumToShow, otherAlbumToShow, imageUserToShow;
+				var userAlbumToShow, otherAlbumToShow;
 				if(req.status == 200)
 				{
 					var responseData = JSON.parse(req.responseText);  // Ensure response is parsed as JSON
@@ -187,11 +187,11 @@ function SelectedAlbum()
 					responseData = JSON.parse(req.responseText);
 					console.log("Response Data:", responseData);
 					
-                    // Clear the photos object before populating it with new data
+                   
                     
 					
 				}
-				self.update(responseData);
+				self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
 				
 			} else if (req.status == 403)
 			{
@@ -211,36 +211,24 @@ function SelectedAlbum()
 	    for (let i = startIndex; i < startIndex + 5 && i < imagesCommentToShow.length; i++) {
 	       	const image = imagesCommentToShow[i];
 	        const photoElement = document.createElement('img');
-            photoElement.src = image.System_Path;
+            
+            photoElement.src = "/ProgettoTIWJS"+ image.System_Path;
+            console.log(photoElement.src);
             photoElement.classList.add('photo');
             photoElement.addEventListener('click', () => {
-                displayComments(image.Image_Id);
+                displayComments(image.Comments);
             });
             photoContainer.appendChild(photoElement);
 	        
 	    } 
-	    /*
-	    for (let key in imagesCommentToShow) {
-            if (imagesCommentToShow.hasOwnProperty(key)) {
-                const image = imagesCommentToShow[key];
-                const photoElement = document.createElement('img');
-                
-                console.log(image.System_Path);
-                photoElement.src = 'http://localhost:8080ProgettoTIWJS/Home.html' + image.System_Path;
-                console.log(photoElement.src);
-                photoElement.classList.add('photo');
-                photoElement.addEventListener('click', () => {
-                    displayComments(image.Image_Id);
-                });
-                photoContainer.appendChild(photoElement);
-            }
-        }
-		*/
+	  
+    
+	  
 	    const prevButton = document.getElementById('prevButton');
 	    const nextButton = document.getElementById('nextButton');
 	    prevButton.disabled = startIndex === 0;
 	   // nextButton.disabled = startIndex + 5 >= imagesCommentToShow.length;
-	    nextButton.disabled = startIndex + 5 >= Object.keys(imagesCommentToShow).length;
+	    nextButton.disabled = startIndex + 5 >= imagesCommentToShow.length;
 	
 	    prevButton.addEventListener('click', () => {
 	        if (startIndex > 0) {
@@ -249,7 +237,7 @@ function SelectedAlbum()
 	        }
 	    });
 	    nextButton.addEventListener('click', () => {
-	        if (startIndex + 5 < Object.keys(imagesCommentToShow).length) {
+	        if (startIndex + 5 < imagesCommentToShow.length) {
 	           // displayPhotos(startIndex + 5);
 	            self.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
 	        }

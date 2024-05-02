@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,28 @@ public class GoToAlbumPage extends HttpServlet {
             return;
         }
         
+        
+        
+        List<Map<String, Object>> albumData = new ArrayList<>();
+        CommentDAO commentDao = new CommentDAO(connection);
+        try {
+        	for (Image image : images) {
+                Map<String, Object> imageData = new HashMap<>();
+                imageData.put("System_Path", image.getSystem_Path());
+                imageData.put("Title", image.getTitle());
+                imageData.put("Description", image.getDescription());
+                
+                List<Comment> comments = commentDao.findCommentsByImage(image.getImage_Id());
+                imageData.put("Comments", comments);
+
+                albumData.add(imageData);
+            }
+        } catch (SQLException e)
+        {
+        	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
+        }
+        /*
         HashMap<Image, List<Comment>> albumCommentHashMap = new HashMap<>();
         CommentDAO commentDao = new CommentDAO(connection);
         List<Comment> comments = null;
@@ -97,7 +120,7 @@ public class GoToAlbumPage extends HttpServlet {
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         	response.getWriter().println("Internal server error while retrieving album data: "+ e.getMessage());
         }
-        
+        */
      /* Create a map to hold image details and associated comments
         Map<Object, List> albumData = new HashMap<>();
         CommentDAO commentDao = new CommentDAO(connection);
@@ -121,11 +144,11 @@ public class GoToAlbumPage extends HttpServlet {
         } */
 
         // Convert the map to JSON
-        String jsonResponse = new Gson().toJson(albumCommentHashMap);
+        String jsonResponse = new Gson().toJson(albumData);
 
     	Gson gson = new GsonBuilder()
 				   .setDateFormat("yyyy MMM dd").create();
-		String albumCommentHashMapJson = gson.toJson(albumCommentHashMap);
+		String albumCommentHashMapJson = gson.toJson(albumData);
 		
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
