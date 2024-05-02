@@ -1,4 +1,4 @@
-//in this way the variables end up in the global scope add curly braces to prevent this
+//in this way the variables end up in the global scope, add curly braces to prevent this
 let userWelcomeMessage, allAlbumToShow, selectedAlbum, selectedImage,
 pageOrchestrator = new PageOrchestrator();
 
@@ -59,8 +59,9 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 					otherAlbumToShow = responseData.otherUserAlbumJson;
 					//imageUserToShow = responseData.imageUserJson;
 				}
+				console.log(otherAlbumToShow)
 				self.updateAlbum(userAlbumToShow, self.userAlbum);
-				self.updateAlbum(otherAlbumToShow, self.otherAlbum);
+				self.updateOtherAlbum(otherAlbumToShow, self.otherAlbum);
 				self.showAlbumForm(false);
 			}
 			else if (req.status == 403)
@@ -69,7 +70,8 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 				windows.sessionStorage.removeItem('username');
 			}
 		}, true);
-	} 
+	}
+	 
 	this.updateAlbum = function(albumToShow, listContainer)
 	{
 	  //  var listContainer = document.getElementById(idListContainer);
@@ -77,7 +79,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
         console.log('No albums to display');
         listContainer.innerHTML = "<p>No albums available.</p>"; // Provide feedback
         return;
-    }
+    	}
 	        listContainer.innerHTML = "";
 	
 	
@@ -88,7 +90,6 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		        anchor.href = "#"; 
 		        anchor.textContent = album.Title;
 		        anchor.setAttribute("albumTitle", album.Title);
-		        var albumCreator = album.User_id;
 		        anchor.addEventListener("click", function() {
 		        	console.log("Album Creator:", album.User_id); 
 					selectedAlbum.show(album.Title, album.User_id);
@@ -99,6 +100,41 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	        listContainer.appendChild(listItem);
 	    });
 	}
+	
+	this.updateOtherAlbum = function(userAlbumMap, listContainer) {
+	    if (!userAlbumMap || userAlbumMap.size === 0) {
+	        console.log('No albums to display');
+	        listContainer.innerHTML = "<p>No albums available.</p>"; // Provide feedback
+	        return;
+	    }
+	  
+	    console.log(listContainer)
+	    listContainer.innerHTML = "";
+	
+		for(var user in userAlbumMap)
+		{
+			var userHeader = document.createElement("h3");
+	    	userHeader.textContent = user;
+	    	listContainer.appendChild(userHeader);
+	    	
+	        userAlbumMap[user].forEach(function(album) {
+	            var listItem = document.createElement("li");
+	            var anchor = document.createElement("a");
+	            anchor.href = "#";
+	            anchor.textContent = album.Title;
+	            anchor.setAttribute("albumTitle", album.Title);
+	            anchor.addEventListener("click", function() {
+	                console.log("Album Creator:", album.User_id);
+	                selectedAlbum.show(album.Title, album.User_id);
+	            });
+	
+	            listItem.appendChild(anchor);
+	
+	            listContainer.appendChild(listItem);
+	    });
+	    }
+
+	};
 
 	//we can reuse the function to cover the form just in case
 	this.showAlbumForm = function(hide)

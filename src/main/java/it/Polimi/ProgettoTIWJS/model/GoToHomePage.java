@@ -78,6 +78,7 @@ public class GoToHomePage extends HttpServlet {
                 }
             }
 
+      
             Gson gson = new GsonBuilder()
                            .setDateFormat("yyyy MMM dd").create();
             Map<String, Object> responseData = new HashMap<>();
