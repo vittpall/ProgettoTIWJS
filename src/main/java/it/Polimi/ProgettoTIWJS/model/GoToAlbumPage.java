@@ -68,6 +68,10 @@ public class GoToAlbumPage extends HttpServlet {
         try { 	
             images = imageDao.findImagesByAlbum(AlbumTitle, idAlbumCreator);
             System.out.println(images.size());
+            /*
+            for (Image image : images) {
+                System.out.println("Image system path: " + image.getSystem_Path());
+            } */
             
         } catch (SQLException e) {
         	e.printStackTrace();

@@ -4,6 +4,7 @@ package it.Polimi.ProgettoTIWJS.model;
 
 import it.Polimi.ProgettoTIWJS.dao.AlbumDAO;
 import it.Polimi.ProgettoTIWJS.dao.ImageDAO;
+import it.Polimi.ProgettoTIWJS.Utils.ConnectionHandler;
 import it.Polimi.ProgettoTIWJS.beans.Album;
 import it.Polimi.ProgettoTIWJS.beans.Image;
 import it.Polimi.ProgettoTIWJS.beans.User;
@@ -37,7 +38,7 @@ public class CreateAlbum extends HttpServlet {
     private String folderPath = "";
 
     public void init() throws ServletException {
-        try {
+    	try {
             ServletContext context = getServletContext();
             String driver = context.getInitParameter("dbDriver");
             String url = context.getInitParameter("dbUrl");
