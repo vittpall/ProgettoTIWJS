@@ -142,6 +142,7 @@ public class CreateAlbum extends HttpServlet {
             File file = new File(outputPath);
 
             try (InputStream input = filePart.getInputStream()) {
+            	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
                 Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
             } catch (IOException e) {

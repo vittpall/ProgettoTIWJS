@@ -154,19 +154,24 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		})
 	} */
 	document.getElementById('createAlbumForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-        makeCall('POST', 'CreateAlbum', this, function(req) {
-            if (req.readyState === XMLHttpRequest.DONE) {
-                var message = req.responseText;
-                if (req.status === 200) {
-                    console.log('Album created successfully');
-                    allAlbumToShow.refreshAlbums(); // Refresh the list of albums
-                } else {
-                    alert('Error creating album: ' + message);
-                }
+    event.preventDefault(); // Prevent the default form submission
+
+    // Use the makeCall utility to send a POST request with form data
+    makeCall('POST', 'CreateAlbum', this, function(req) {
+        if (req.readyState == 4) { // Check if the request has completed
+            if (req.status == 200) {
+                console.log('Album created successfully');
+                allAlbumToShow.refreshAlbums(); // Refresh the list of albums
+            } else if (req.status == 403) {
+                window.location.href = "index.html";
+                window.sessionStorage.removeItem('username');
+            } else {
+                alert('Error creating album: ' + req.responseText);
             }
-        });
+        }
     });
+});
+
 	
 }
 
