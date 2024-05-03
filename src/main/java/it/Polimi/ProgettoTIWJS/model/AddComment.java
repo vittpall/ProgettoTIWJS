@@ -1,9 +1,13 @@
 package it.Polimi.ProgettoTIWJS.model;
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -28,6 +32,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @WebServlet("/AddComment")
+@MultipartConfig
 public class AddComment extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
@@ -43,10 +48,12 @@ public class AddComment extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String commentText = request.getParameter("comment");
-        String albumTitle = request.getParameter("albumTitle");
-        /*
-        String image_id = request.getParameter("imageId");
+        String commentText =StringEscapeUtils.escapeJava( request.getParameter("comment"));
+        System.out.println(commentText);
+        String albumTitle = StringEscapeUtils.escapeJava(request.getParameter("albumTitle"));
+        System.out.println(albumTitle);
+        String image_id = StringEscapeUtils.escapeJava(request.getParameter("imageId"));
+        System.out.println(image_id);
         
         int imageId;
         try {
@@ -55,7 +62,7 @@ public class AddComment extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("Invalid image ID format: " +e.getMessage());
             return;
-        } */
+        } 
 
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
@@ -74,7 +81,7 @@ public class AddComment extends HttpServlet {
         try {
             Comment comment = new Comment();
             comment.setText(commentText);
-          //  comment.setImage_id(imageId);
+            comment.setImage_id(imageId);
             comment.setUser_id(user.getId());
             comment.setPublication_date(LocalDateTime.now());
           

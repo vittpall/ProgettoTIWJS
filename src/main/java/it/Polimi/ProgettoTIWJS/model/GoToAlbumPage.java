@@ -89,6 +89,7 @@ public class GoToAlbumPage extends HttpServlet {
                 Map<String, Object> imageData = new HashMap<>();
                 imageData.put("System_Path", image.getSystem_Path());
                 imageData.put("Title", image.getTitle());
+                imageData.put("Image_Id", image.getImage_Id());
                 imageData.put("Description", image.getDescription());
                 
                 List<Comment> comments = commentDao.findCommentsByImage(image.getImage_Id());

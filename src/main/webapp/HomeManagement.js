@@ -214,8 +214,10 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 function SelectedAlbum()
 {
 	//var photos = {};
+	var currentAlbumTitle;
 	this.show = function(albumTitle, albumCreator)
 	{
+		currentAlbumTitle = albumTitle;
 		var self = this;
 		// Hide album sections and show image details
         document.getElementById('albumSection').style.display = 'none';
@@ -261,7 +263,8 @@ function SelectedAlbum()
             console.log(photoElement.src);
             photoElement.classList.add('photo');
             photoElement.addEventListener('load', () => {
-                displayComments(image.Comments);
+            	console.log("Image Data:", image);
+                displayComments(image.Comments, currentAlbumTitle, image.Image_Id);
             });
             photoContainer.appendChild(photoElement);
 	        
@@ -291,14 +294,17 @@ function SelectedAlbum()
 
 
 	// Function to display comments for a specific photo
-	function displayComments(comments) {
+	function displayComments(comments, albumTitle, imageId) {
 	    const commentsContainer = document.getElementById('commentsContainer');
 	    commentsContainer.innerHTML = '';
+	    if (!Array.isArray(comments)) {
+        comments = [];  // Ensure comments is an array, even if it's empty
+    }
 	   // const comments = photos[photoKey];
 	    const commentList = document.createElement('ul');
 	    comments.forEach(comment => {
 	        const listItem = document.createElement('li');
-	        listItem.textContent = comment;
+	        listItem.textContent = comment.Text;
 	        commentList.appendChild(listItem);
 	    });
 	    commentsContainer.appendChild(commentList);
@@ -309,22 +315,53 @@ function SelectedAlbum()
 	    commentInput.setAttribute('type', 'text');
 	    commentInput.setAttribute('name', 'comment');  // Ensure the name attribute is set for proper FormData handling
 	    commentInput.setAttribute('placeholder', 'Add a comment');
+	    
+	    // Input for album title, included even if hidden for future use
+    	const albumTitleInput = document.createElement('input');
+    	albumTitleInput.setAttribute('type', 'hidden');
+    	albumTitleInput.setAttribute('name', 'albumTitle');
+    	albumTitleInput.value = albumTitle;
+
+    	// Input for image ID
+    	const imageIdInput = document.createElement('input');
+    	imageIdInput.setAttribute('type', 'hidden');
+    	imageIdInput.setAttribute('name', 'imageId');
+    	imageIdInput.value = imageId;
+    	console.log("Image ID Input Value:", imageIdInput.value);
 	    const addButton = document.createElement('button');
 	    addButton.textContent = 'Add Comment';
 	    addButton.type = 'submit';
-	    addButton.addEventListener('click', () => {
+	    function logFormData(formData) {
+    for (let [key, value] of formData.entries()) {
+        console.log(key + ': ' + value);
+    }
+}
+	    addButton.addEventListener('click', (event) => {
+	        event.preventDefault();
 	        const newComment = commentInput.value;
+	        if (newComment === ''){
+	        	alert('Comment cannot be empty!');
+            return;
+	        }
 	        if (newComment.trim() !== '') {
 	            // Create FormData to hold the comment
             //const formData = new FormData();
             //formData.append('comment', newComment); 
+            commentForm.appendChild(albumTitleInput);
+            commentForm.appendChild(imageIdInput);
+            const formData = new FormData(commentForm);
+        	logFormData(formData); // Call this function to log form data
             makeCall('POST', 'AddComment', commentForm, function(req) {
-                if (req.readyState == 4 && req.status == 200) {
-                    // Assuming the server responds with the updated list of comments
-                    const updatedComments = JSON.parse(req.responseText);
-                    displayComments(updatedComments);
-                }
-            }, false);  // Set 'reset' to false to not reset the form automatically
+        if (req.readyState === XMLHttpRequest.DONE) {
+            if (req.status === 200) {
+                const updatedComments = JSON.parse(req.responseText);
+                displayComments(updatedComments, currentAlbumTitle, imageId);  // Re-render comments
+                commentInput.value = '';  // Clear the input field
+            } else {
+                alert("Failed to add comment: " + req.statusText);
+            }
+        }
+    }, false);  // Set 'reset' to false to not reset the form automatically
 
             commentInput.value = '';  // Clear input field
 	        }

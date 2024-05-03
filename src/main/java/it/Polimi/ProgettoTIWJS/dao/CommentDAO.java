@@ -13,6 +13,7 @@ import java.util.List;
 import it.Polimi.ProgettoTIWJS.beans.Comment;
 
 
+
 public class CommentDAO {
     private final Connection con;
 
