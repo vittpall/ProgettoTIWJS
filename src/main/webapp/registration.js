@@ -42,7 +42,7 @@
             var message = response.responseText;
             var messagePwd = response.wrongEmailJson;
             var messageEmail = response.pswNotMatchJson;
-            var messageUsername = response.usernmaeAlreadyTakenJson;
+            var messageUsername = response.usernameAlreadyTakenJson;
             var username = form.querySelector('input[name="username"]'); 
  
 	
