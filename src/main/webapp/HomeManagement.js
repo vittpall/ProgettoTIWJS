@@ -260,7 +260,7 @@ function SelectedAlbum()
             photoElement.src = "/ProgettoTIWJS"+ image.System_Path;
             console.log(photoElement.src);
             photoElement.classList.add('photo');
-            photoElement.addEventListener('click', () => {
+            photoElement.addEventListener('load', () => {
                 displayComments(image.Comments);
             });
             photoContainer.appendChild(photoElement);
@@ -278,23 +278,23 @@ function SelectedAlbum()
 	    prevButton.addEventListener('click', () => {
 	        if (startIndex > 0) {
 	           // displayPhotos(startIndex - 5);
-	            self.update(imagesCommentToShow, startIndex - 5); // Use self.update to recursively call update function
+	            this.update(imagesCommentToShow, startIndex - 5); // Use self.update to recursively call update function
 	        }
 	    });
 	    nextButton.addEventListener('click', () => {
 	        if (startIndex + 5 < imagesCommentToShow.length) {
 	           // displayPhotos(startIndex + 5);
-	            self.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
+	            this.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
 	        }
 	    });
 }
 
 
 	// Function to display comments for a specific photo
-	function displayComments(photoKey) {
+	function displayComments(comments) {
 	    const commentsContainer = document.getElementById('commentsContainer');
 	    commentsContainer.innerHTML = '';
-	    const comments = photos[photoKey];
+	   // const comments = photos[photoKey];
 	    const commentList = document.createElement('ul');
 	    comments.forEach(comment => {
 	        const listItem = document.createElement('li');
@@ -304,17 +304,29 @@ function SelectedAlbum()
 	    commentsContainer.appendChild(commentList);
 	
 	    const commentForm = document.createElement('form');
+	    commentForm.onsubmit = function() { return false; };  // Prevent the form from submitting traditionally
 	    const commentInput = document.createElement('input');
 	    commentInput.setAttribute('type', 'text');
+	    commentInput.setAttribute('name', 'comment');  // Ensure the name attribute is set for proper FormData handling
 	    commentInput.setAttribute('placeholder', 'Add a comment');
 	    const addButton = document.createElement('button');
 	    addButton.textContent = 'Add Comment';
+	    addButton.type = 'submit';
 	    addButton.addEventListener('click', () => {
 	        const newComment = commentInput.value;
 	        if (newComment.trim() !== '') {
-	            comments.push(newComment);
-	            displayComments(photoKey);
-	            commentInput.value = '';
+	            // Create FormData to hold the comment
+            //const formData = new FormData();
+            //formData.append('comment', newComment); 
+            makeCall('POST', 'AddComment', commentForm, function(req) {
+                if (req.readyState == 4 && req.status == 200) {
+                    // Assuming the server responds with the updated list of comments
+                    const updatedComments = JSON.parse(req.responseText);
+                    displayComments(updatedComments);
+                }
+            }, false);  // Set 'reset' to false to not reset the form automatically
+
+            commentInput.value = '';  // Clear input field
 	        }
 	    });
 	    commentForm.appendChild(commentInput);
