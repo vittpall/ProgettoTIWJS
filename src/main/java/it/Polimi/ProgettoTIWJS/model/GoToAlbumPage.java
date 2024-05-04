@@ -89,6 +89,7 @@ public class GoToAlbumPage extends HttpServlet {
         try {
         	for (Image image : images) {
                 Map<String, Object> imageData = new HashMap<>();
+                System.out.println(image.getSystem_Path());
                 imageData.put("System_Path", image.getSystem_Path());
                 imageData.put("Title", image.getTitle());
                 imageData.put("Image_Id", image.getImage_Id());

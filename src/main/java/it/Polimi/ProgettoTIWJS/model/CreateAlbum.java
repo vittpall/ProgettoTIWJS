@@ -40,40 +40,25 @@ public class CreateAlbum extends HttpServlet {
     private String folderPathToCopyFrom = "";
 
     public void init() throws ServletException {
-    	try {
-            ServletContext context = getServletContext();
-            String driver = context.getInitParameter("dbDriver");
-            String url = context.getInitParameter("dbUrl");
-            String user = context.getInitParameter("dbUser");
-            String password = context.getInitParameter("dbPassword");
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, user, password);
+    
+    		connection = ConnectionHandler.getConnection(getServletContext());
+    		ServletContext context = getServletContext();
 
             // Ensure the directory path is properly initialized and accessible
            folderPath = context.getRealPath("/images/");
-       //    System.out.println(folderPath);
            folderPathToCopyFrom = getServletContext().getInitParameter("outputpath");
 
             File imagesDir = new File(folderPath);
             if (!imagesDir.exists()) {
                 imagesDir.mkdirs();
             }
-            
-            /*
-            Path sourceDir = Paths.get(folderPathToCopyFrom);
-            Path targetDir = Paths.get(folderPath);
-            */
-            //CopyFileToDeployedFolder(sourceDir, targetDir);
-            
-            
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new UnavailableException("Cannot load database driver or establish connection: " + e.getMessage());
-        }
+     
+      
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-     //   String path = getServletContext().getContextPath() + "/GoToHomePage";
+
         String[] selectedImages = request.getParameterValues("selectedImages");
         
         User user = (User) request.getSession().getAttribute("user");
@@ -90,7 +75,6 @@ public class CreateAlbum extends HttpServlet {
             return;
         }
 
-        //add images taken from the checkbox
         Album album = new Album();
         album.setTitle(title);
         album.setUser_id(user.getId());
@@ -142,7 +126,7 @@ public class CreateAlbum extends HttpServlet {
         }
 
         handleImageUpload(request, response, user, title);
-    //    response.sendRedirect(path);
+
     }
 
     private void handleImageUpload(HttpServletRequest request, HttpServletResponse response, User user, String title)
@@ -159,18 +143,14 @@ public class CreateAlbum extends HttpServlet {
             try (InputStream input = filePart.getInputStream()) {
      //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
                 Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-     
-           //     Files.copy(input, fileBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
             } catch (IOException e) {
                 throw new ServletException("Error while saving file: " + e.getMessage(), e);
             }
+            
             try (InputStream input = filePart.getInputStream()) {
-     //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
-            //    Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-     
+     //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exists   
                 Files.copy(input, fileBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
-           //     storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
             } catch (IOException e) {
                 throw new ServletException("Error while saving file: " + e.getMessage(), e);
             }

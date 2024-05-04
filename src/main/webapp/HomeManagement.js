@@ -50,18 +50,21 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		{
 			if(req.readyState == 4)
 			{	
-				var userAlbumToShow, otherAlbumToShow;
+				var userAlbumToShow, otherAlbumToShow, userImages;
 				if(req.status == 200)
 				{
 					var responseData = JSON.parse(req.responseText);  // Ensure response is parsed as JSON
                 	console.log("Response Data:", responseData);
 					userAlbumToShow = responseData.userAlbumJson;
 					otherAlbumToShow = responseData.otherUserAlbumJson;
+					userImages = responseData.imageUserJson;
+					//console.log(userImages);
 					//imageUserToShow = responseData.imageUserJson;
 				}
 				console.log(otherAlbumToShow)
 				self.updateAlbum(userAlbumToShow, self.userAlbum);
 				self.updateOtherAlbum(otherAlbumToShow, self.otherAlbum);
+				self.populateForm(userImages);
 				self.showAlbumForm(false);
 			}
 			else if (req.status == 403)
@@ -71,6 +74,29 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 			}
 		}, true);
 	}
+	
+	this.populateForm =  function populateCheckboxes(options) {
+	    var checkboxContainer = document.getElementById('checkboxContainer');
+	    checkboxContainer.innerHTML = ''; // Clear previous checkboxes
+	
+	    options.forEach(option => {
+	      var checkbox = document.createElement('input');
+	      checkbox.type = 'checkbox';
+	      checkbox.name = 'selectedImages';
+	      checkbox.value = option.Image_Id;
+	      checkbox.id = 'option_' + option.Image_Id;
+	    
+	
+	      var label = document.createElement('label');
+	      label.htmlFor = option.Title;
+	      label.appendChild(document.createTextNode(option.Title));
+	
+	      checkboxContainer.appendChild(checkbox);
+	      checkboxContainer.appendChild(label);
+	      checkboxContainer.appendChild(document.createElement('br'));
+	    });
+  }
+
 	 
 	this.updateAlbum = function(albumToShow, listContainer)
 	{

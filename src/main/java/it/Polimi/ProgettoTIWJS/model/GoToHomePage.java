@@ -49,20 +49,20 @@ public class GoToHomePage extends HttpServlet {
 
     public void init() throws ServletException {
         		connection = ConnectionHandler.getConnection(getServletContext());
-        		ServletContext context = getServletContext();
+        		//ServletContext context = getServletContext();
                 // Ensure the directory path is properly initialized and accessible
-                String folderPath = context.getRealPath("/images/");
+                String folderPath = getServletContext().getRealPath("/images/");
                 String folderPathToCopyFrom = getServletContext().getInitParameter("outputpath");
       
-                 File imagesDir = new File(folderPath);
-                 if (!imagesDir.exists()) {
-                     imagesDir.mkdirs();
-                 }
+                File imagesDir = new File(folderPath);
+                if (!imagesDir.exists()) {
+                    imagesDir.mkdirs();
+                }
                  
-                 Path sourceDir = Paths.get(folderPathToCopyFrom);
-                 Path targetDir = Paths.get(folderPath);
+                Path sourceDir = Paths.get(folderPathToCopyFrom);
+                Path targetDir = Paths.get(folderPath);
                  
-                 CopyFileToDeployedFolder(sourceDir, targetDir);
+                CopyFileToDeployedFolder(sourceDir, targetDir);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
