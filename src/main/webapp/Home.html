@@ -3,87 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Album and Image Manager</title>
-    <style>
-        body, html {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: #f3f3f3;
-            padding: 10px 20px;
-            text-align: right;
-        }
-        main {
-            padding: 20px;
-        }
-        .albums ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .albums li {
-            margin-bottom: 5px;
-        }
-        .photo-thumbnail {
-            width: 100px;
-            height: auto;
-            cursor: pointer;
-            margin: 5px;
-        }
-        #imageModal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1000; /* Sit on top */
-            padding-top: 50px; /* Location of the box */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
-        }
-        #modalContent {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%; /* Slightly smaller modal */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            position: relative;
-        }
-        #img01 {
-            width: 100%; /* Responsive width */
-            margin-bottom: 10px;
-        }
-        #caption {
-            color: #333;
-            padding: 10px 0;
-            text-align: center;
-        }
-        .close {
-            color: #aaa;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        #commentsContainer {
-            margin-top: 20px;
-        }
-        #commentsContainer ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-    </style>
+    
+    <link rel="stylesheet" type="text/css" media="all" href="css/homestyle.css" />
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/dist/sortable.min.js"></script>
     <script src="makeCall.js" charset="utf-8" defer></script> <!-- General AJAX utility -->
     <script src="HomeManagement.js" defer></script> <!-- Your main JavaScript managing albums and images -->
@@ -107,6 +28,7 @@
                 <h2>Others' Albums</h2>
                 <ul></ul> <!-- List container for other users' albums -->
             </div>
+            <h2>Album Creation form</h2>
             <div id="albumCreationForm" style="visibility:hidden;">
                 <form id="createAlbumForm" method="post" enctype="multipart/form-data">
                     <input type="text" name="title" placeholder="Album Title" required>
