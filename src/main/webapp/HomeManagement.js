@@ -247,7 +247,8 @@ function SelectedAlbum() {
 			photoElement.src = "/ProgettoTIWJS" + image.System_Path;
 			console.log(photoElement.src);
 			photoElement.classList.add('photo-thumbnail');
-			photoElement.onclick = () => this.showModal(image);
+			//photoElement.onclick = () => this.showModal(image);
+			photoElement.addEventListener("mouseover", () => this.showModal(image)); // Changed to 'mouseover'
 			photoContainer.appendChild(photoElement);
 		}
 
@@ -297,7 +298,7 @@ function SelectedAlbum() {
 		document.getElementById('imageDetailsSection').style.display = 'block';
 	};
 }
-
+    /*
 	// Function to display comments for a specific photo
 	function displayComments(comments, albumTitle, imageId, image) {
 	    const commentsContainer = document.getElementById('commentsContainer');
@@ -312,6 +313,8 @@ function SelectedAlbum() {
 	        commentList.appendChild(listItem);
 	    });
 	    commentsContainer.appendChild(commentList);
+	    // Scroll to the bottom of the container to ensure the form is visible
+    commentsContainer.scrollTop = commentsContainer.scrollHeight;
 	
 	    const commentForm = document.createElement('form');
 	    const commentInput = document.createElement('input');
@@ -365,7 +368,85 @@ function SelectedAlbum() {
 	    commentForm.appendChild(commentInput);
 	    commentForm.appendChild(addButton);
 	    commentsContainer.appendChild(commentForm);
-	}
+	    
+	} */
+	function displayComments(comments, albumTitle, imageId, image) {
+    const commentsContainer = document.getElementById('commentsContainer');
+    commentsContainer.innerHTML = ''; // Clear previous contents
+    const commentList = document.createElement('ul');
+	// Check if comments is actually an array
+    if (!Array.isArray(comments)) {
+        //console.error("Expected an array for comments, received:", comments);
+        comments = []; // Ensure we have an array to avoid further errors, or handle this error appropriately
+    }
+    comments.forEach(comment => {
+        const listItem = document.createElement('li');
+        listItem.textContent = comment.Text;
+        commentList.appendChild(listItem);
+    });
+
+    commentsContainer.appendChild(commentList);
+
+    // Add the comment form
+    const commentForm = createCommentForm(albumTitle, imageId);
+    commentsContainer.appendChild(commentForm);
+
+    // Scroll to the bottom of the container to ensure the form is visible
+    commentsContainer.scrollTop = commentsContainer.scrollHeight;
+}
+
+function createCommentForm(albumTitle, imageId) {
+    const commentForm = document.createElement('form');
+    const commentInput = document.createElement('input');
+    commentInput.type = 'text';
+    commentInput.name = 'comment';
+    commentInput.placeholder = 'Add a comment';
+    
+    const albumTitleInput = document.createElement('input');
+    albumTitleInput.type = 'hidden';
+    albumTitleInput.name = 'albumTitle';
+    albumTitleInput.value = albumTitle;
+
+    const imageIdInput = document.createElement('input');
+    imageIdInput.type = 'hidden';
+    imageIdInput.name = 'imageId';
+    imageIdInput.value = imageId;
+
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Comment';
+    addButton.type = 'submit';
+    addButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        handleAddComment(commentForm, commentInput, albumTitle, imageId);
+    });
+
+    commentForm.appendChild(commentInput);
+    commentForm.appendChild(albumTitleInput);
+    commentForm.appendChild(imageIdInput);
+    commentForm.appendChild(addButton);
+
+    return commentForm;
+}
+
+function handleAddComment(commentForm, commentInput, albumTitle, imageId) {
+    const newComment = commentInput.value.trim();
+    if (newComment === '') {
+        alert('Comment cannot be empty!');
+        return;
+    }
+    makeCall('POST', 'AddComment', commentForm, function(req) {
+        if (req.readyState === XMLHttpRequest.DONE) {
+            if (req.status === 200) {
+                const updatedComments = JSON.parse(req.responseText);
+                displayComments(updatedComments, albumTitle, imageId);
+                commentInput.value = '';  // Clear the input field
+            } else {
+                alert("Failed to add comment: " + req.statusText);
+            }
+        }
+    }, false);
+}
+
 
 	
 
