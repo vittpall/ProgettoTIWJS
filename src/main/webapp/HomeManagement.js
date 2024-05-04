@@ -211,96 +211,100 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	
 }
 
-function SelectedAlbum()
-{
-	//var photos = {};
-	var currentAlbumTitle;
-	this.show = function(albumTitle, albumCreator)
-	{
+function SelectedAlbum() {
+	var currentAlbumTitle, currentImageId;
+	this.show = function (albumTitle, albumCreator) {
 		currentAlbumTitle = albumTitle;
 		var self = this;
 		// Hide album sections and show image details
-        document.getElementById('albumSection').style.display = 'none';
-        document.getElementById('imageDetailsSection').style.display = 'block';
+		document.getElementById('albumSection').style.display = 'none';
+		document.getElementById('imageDetailsSection').style.display = 'block';
 		//to retrieve all the album's images and comments related to the them
-		makeCall("GET", "GoToAlbumPage?albumTitle=" + encodeURIComponent(albumTitle)+ "&albumCreator=" + encodeURIComponent(albumCreator), null,
-		function(req)
-		{
-			if(req.readyState == 4)
-			{
-				var message = req.responseText;
-				if(req.status == 200)
-				{
-					responseData = JSON.parse(req.responseText);
-					console.log("Response Data:", responseData);
-					
-                   
-                    
-					
+		makeCall("GET", "GoToAlbumPage?albumTitle=" + encodeURIComponent(albumTitle) + "&albumCreator=" + encodeURIComponent(albumCreator), null,
+			function (req) {
+				if (req.readyState == 4) {
+					var message = req.responseText;
+					if (req.status == 200) {
+						responseData = JSON.parse(req.responseText);
+						console.log("Response Data:", responseData);
+					}
+					self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
+
+				} else if (req.status == 403) {
+					window.location.href = "index.html";
+					window.sessionStorage.removeItem('username');
 				}
-				self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
-				
-			} else if (req.status == 403)
-			{
-				window.location.href = "index.html";
-				window.sessionStorage.removeItem('username');
-			}	
-		})
+			})
 	}
-	
-	this.update = function(imagesCommentToShow, startIndex)
-	{
-	    const photoContainer = document.getElementById('photoContainer');
-	    const commentsContainer = document.getElementById('commentsContainer');
-	    photoContainer.innerHTML = '';
-	    commentsContainer.innerHTML = '';
-		
-	    for (let i = startIndex; i < startIndex + 5 && i < imagesCommentToShow.length; i++) {
-	       	const image = imagesCommentToShow[i];
-	        const photoElement = document.createElement('img');
-            
-            photoElement.src = "/ProgettoTIWJS"+ image.System_Path;
-            console.log(photoElement.src);
-            photoElement.classList.add('photo');
-            photoElement.addEventListener('load', () => {
-            	console.log("Image Data:", image);
-                displayComments(image.Comments, currentAlbumTitle, image.Image_Id);
-            });
-            photoContainer.appendChild(photoElement);
-	        
-	    } 
-	  
-    
-	  
-	    const prevButton = document.getElementById('prevButton');
-	    const nextButton = document.getElementById('nextButton');
-	    prevButton.disabled = startIndex === 0;
-	   // nextButton.disabled = startIndex + 5 >= imagesCommentToShow.length;
-	    nextButton.disabled = startIndex + 5 >= imagesCommentToShow.length;
-	
-	    prevButton.addEventListener('click', () => {
-	        if (startIndex > 0) {
-	           // displayPhotos(startIndex - 5);
-	            this.update(imagesCommentToShow, startIndex - 5); // Use self.update to recursively call update function
-	        }
-	    });
-	    nextButton.addEventListener('click', () => {
-	        if (startIndex + 5 < imagesCommentToShow.length) {
-	           // displayPhotos(startIndex + 5);
-	            this.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
-	        }
-	    });
+
+	this.update = function (imagesCommentToShow, startIndex) {
+		const photoContainer = document.getElementById('photoContainer');
+		photoContainer.innerHTML = '';
+		for (let i = startIndex; i < startIndex + 5 && i < imagesCommentToShow.length; i++) {
+			const image = imagesCommentToShow[i];
+			const photoElement = document.createElement('img');
+			currentImageId = image.Image_Id;  // Update current image ID
+			photoElement.src = "/ProgettoTIWJS" + image.System_Path;
+			console.log(photoElement.src);
+			photoElement.classList.add('photo-thumbnail');
+			photoElement.onclick = () => this.showModal(image);
+			photoContainer.appendChild(photoElement);
+		}
+
+		const prevButton = document.getElementById('prevButton');
+		const nextButton = document.getElementById('nextButton');
+		prevButton.disabled = startIndex === 0;
+		nextButton.disabled = startIndex + 5 >= imagesCommentToShow.length;
+
+		prevButton.addEventListener('click', () => {
+			if (startIndex > 0) {
+				// displayPhotos(startIndex - 5);
+				this.update(imagesCommentToShow, startIndex - 5); // Use self.update to recursively call update function
+			}
+		});
+		nextButton.addEventListener('click', () => {
+			if (startIndex + 5 < imagesCommentToShow.length) {
+				// displayPhotos(startIndex + 5);
+				this.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
+			}
+		});
+	}
+
+	this.showModal = function (image) {
+		currentImageId = image.Image_Id;  // Update current image ID when modal is shown
+		const modal = document.getElementById('imageModal');
+		const modalImg = document.getElementById("img01");
+		const captionText = document.getElementById("caption");
+		const commentsContainer = document.getElementById('commentsContainer');
+
+		modal.style.display = "block";
+		modalImg.src = "/ProgettoTIWJS" + image.System_Path;
+		captionText.innerHTML = `<strong>${image.Title}</strong><p>${image.Image_Id}</p>`;
+
+		displayComments(image.Comments, currentAlbumTitle, image.Image_Id, image);
+		//commentsContainer.style.display = "block";
+		// Add event listener for close button
+		var closeButton = document.querySelector('.close');
+		closeButton.addEventListener('click', function () {
+			selectedAlbum.closeModal();
+		});
+	};
+	this.closeModal = function () {
+		const modal = document.getElementById('imageModal');
+		modal.style.display = "none";
+		// Show album sections and hide image details
+		document.getElementById('albumSection').style.display = 'none';
+		document.getElementById('imageDetailsSection').style.display = 'block';
+	};
 }
 
-
 	// Function to display comments for a specific photo
-	function displayComments(comments, albumTitle, imageId) {
+	function displayComments(comments, albumTitle, imageId, image) {
 	    const commentsContainer = document.getElementById('commentsContainer');
 	    commentsContainer.innerHTML = '';
 	    if (!Array.isArray(comments)) {
-        comments = [];  // Ensure comments is an array, even if it's empty
-    }
-	   // const comments = photos[photoKey];
+        	comments = [];  // Ensure comments is an array, even if it's empty
+    	}
 	    const commentList = document.createElement('ul');
 	    comments.forEach(comment => {
 	        const listItem = document.createElement('li');
@@ -310,7 +314,6 @@ function SelectedAlbum()
 	    commentsContainer.appendChild(commentList);
 	
 	    const commentForm = document.createElement('form');
-	    commentForm.onsubmit = function() { return false; };  // Prevent the form from submitting traditionally
 	    const commentInput = document.createElement('input');
 	    commentInput.setAttribute('type', 'text');
 	    commentInput.setAttribute('name', 'comment');  // Ensure the name attribute is set for proper FormData handling
@@ -328,14 +331,11 @@ function SelectedAlbum()
     	imageIdInput.setAttribute('name', 'imageId');
     	imageIdInput.value = imageId;
     	console.log("Image ID Input Value:", imageIdInput.value);
+
 	    const addButton = document.createElement('button');
 	    addButton.textContent = 'Add Comment';
 	    addButton.type = 'submit';
-	    function logFormData(formData) {
-    for (let [key, value] of formData.entries()) {
-        console.log(key + ': ' + value);
-    }
-}
+
 	    addButton.addEventListener('click', (event) => {
 	        event.preventDefault();
 	        const newComment = commentInput.value;
@@ -344,33 +344,29 @@ function SelectedAlbum()
             return;
 	        }
 	        if (newComment.trim() !== '') {
-	            // Create FormData to hold the comment
-            //const formData = new FormData();
-            //formData.append('comment', newComment); 
-            commentForm.appendChild(albumTitleInput);
-            commentForm.appendChild(imageIdInput);
-            const formData = new FormData(commentForm);
-        	logFormData(formData); // Call this function to log form data
-            makeCall('POST', 'AddComment', commentForm, function(req) {
-        if (req.readyState === XMLHttpRequest.DONE) {
-            if (req.status === 200) {
-                const updatedComments = JSON.parse(req.responseText);
-                displayComments(updatedComments, currentAlbumTitle, imageId);  // Re-render comments
-                commentInput.value = '';  // Clear the input field
-            } else {
-                alert("Failed to add comment: " + req.statusText);
-            }
-        }
-    }, false);  // Set 'reset' to false to not reset the form automatically
+            	commentForm.appendChild(albumTitleInput);
+            	commentForm.appendChild(imageIdInput);
+            	makeCall('POST', 'AddComment', commentForm, function(req) {
+        		if (req.readyState === XMLHttpRequest.DONE) {
+            		if (req.status === 200) {
+                		const updatedComments = JSON.parse(req.responseText);
+                		displayComments(updatedComments, albumTitle, imageId);  // Re-render comments
+                		//selectedAlbum.refreshComments(updatedComments.comments); // Refresh comments using data returned from AddComment
 
-            commentInput.value = '';  // Clear input field
+                		commentInput.value = '';  // Clear the input field
+            		} else {
+                		alert("Failed to add comment: " + req.statusText);
+            		}
+        		}
+    		}, false);  // Set 'reset' to false to not reset the form automatically
+
 	        }
 	    });
 	    commentForm.appendChild(commentInput);
 	    commentForm.appendChild(addButton);
 	    commentsContainer.appendChild(commentForm);
 	}
-}
+
 	
 
 function PageOrchestrator()
@@ -387,6 +383,8 @@ function PageOrchestrator()
 		// i want to retrieve al the information from the selectedAlbum
 	//	albumCreationForm = new albumCreationForm();
 		selectedAlbum = new SelectedAlbum();
+
+
 	}
 	
 	this.refresh = function(albumTitle){
