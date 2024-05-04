@@ -50,16 +50,10 @@ public class CreateAlbum extends HttpServlet {
             connection = DriverManager.getConnection(url, user, password);
 
             // Ensure the directory path is properly initialized and accessible
-<<<<<<< Updated upstream
-           folderPath = context.getRealPath("/Images/");
-           System.out.println(folderPath);
-       //     folderPath = getServletContext().getInitParameter("outputpath");
-=======
            folderPath = context.getRealPath("/images/");
        //    System.out.println(folderPath);
            folderPathToCopyFrom = getServletContext().getInitParameter("outputpath");
- 
->>>>>>> Stashed changes
+
             File imagesDir = new File(folderPath);
             if (!imagesDir.exists()) {
                 imagesDir.mkdirs();
@@ -165,13 +159,9 @@ public class CreateAlbum extends HttpServlet {
             try (InputStream input = filePart.getInputStream()) {
      //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
                 Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-<<<<<<< Updated upstream
-                storeImageDetails(fileName, "/Images/" + uniqueFileName, title, user.getId());
-=======
      
            //     Files.copy(input, fileBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
->>>>>>> Stashed changes
             } catch (IOException e) {
                 throw new ServletException("Error while saving file: " + e.getMessage(), e);
             }
