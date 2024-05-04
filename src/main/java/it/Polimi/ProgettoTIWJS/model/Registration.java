@@ -131,20 +131,28 @@ public class Registration extends HttpServlet {
                 new_user.setReg_Date(currentDateTime);
                 userDao.registerUser(new_user);
       //          path = "/index.html"; // Redirect to login page after successful registration
+      
+                responseData.put("wrongEmailJson", "correct");
+                responseData.put("pswNotMatchJson", "correct");
+                responseData.put("usernameAlreadyTakenJson", "correct");
+                
+                String jsonResponse = gson.toJson(responseData);
+        		response.setContentType("application/json");
+        		response.setCharacterEncoding("UTF-8");
+        		response.getWriter().write(jsonResponse);
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().println("Registration successful");
+        //        response.getWriter().println("Registration successful");
                 
                 return;
             } catch (SQLException e) {
             	//400
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-   
+                return;
                
             }
-            return;
-
             
-        }else
+        }
+        else
         {
         	
             responseData.put("wrongEmailJson", wrongEmail);
@@ -155,7 +163,6 @@ public class Registration extends HttpServlet {
     		response.setContentType("application/json");
     		response.setCharacterEncoding("UTF-8");
     		response.getWriter().write(jsonResponse);
-     //       response.getWriter().println("Internal server error");
     		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }

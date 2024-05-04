@@ -48,18 +48,20 @@
 	
             switch (x.status) {
               case 200:
-				  console.log("avanti")
-            	sessionStorage.setItem('username', username);
-                window.location.href = "index.html";
+				  	console.log("avanti")
+            		sessionStorage.setItem('username', username);
+                	window.location.href = "index.html";
                 break;
               case 400: // bad request
 
-            	if(messageUsername != null)
+            	if(messageUsername != "correct")
             	{
 					document.getElementById("usernameTaken").textContent = messageUsername;
 					console.log("ciao")
-				}
-            		
+				}else
+				{
+					document.getElementById("usernameTaken").textContent = "";
+				}            		
 
                 break;
                 
