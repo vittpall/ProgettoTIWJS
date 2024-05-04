@@ -111,21 +111,21 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	    console.log(listContainer)
 	    listContainer.innerHTML = "";
 	
-		for(var user in userAlbumMap)
+		for(var username in userAlbumMap)
 		{
 			var userHeader = document.createElement("h3");
-	    	userHeader.textContent = user;
+	    	userHeader.textContent = username;
 	    	listContainer.appendChild(userHeader);
 	    	
-	        userAlbumMap[user].forEach(function(album) {
+	        userAlbumMap[username].forEach(function(album) {
 	            var listItem = document.createElement("li");
 	            var anchor = document.createElement("a");
 	            anchor.href = "#";
 	            anchor.textContent = album.Title;
 	            anchor.setAttribute("albumTitle", album.Title);
 	            anchor.addEventListener("click", function() {
-	                console.log("Album Creator:", album.User_id);
-	                selectedAlbum.show(album.Title, album.User_id);
+	                console.log("Album Creator:", username);
+	                selectedAlbum.show(album.Title, username);
 	            });
 	
 	            listItem.appendChild(anchor);

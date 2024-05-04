@@ -68,13 +68,13 @@ public class GoToHomePage extends HttpServlet {
             List<User> userList = userDao.getAllUsers(); // Retrieve all users
             List<Image> imagesUser = imageDao.RetrieveAllImagesByUser(user); // Images for the logged-in user
             List<Album> userAlbum = albumDao.findAlbumsByUser(user.getUsername()); // Albums for the logged-in user
-            Map<User, List<Album>> otherUserAlbum = new HashMap<>(); // Albums from other users
+            Map<String, List<Album>> otherUserAlbum = new HashMap<>(); // Albums from other users
 
             // Populate albums for other users
             for (User u : userList) {
                 if (!u.getUsername().equals(user.getUsername())) {
                     List<Album> albums = albumDao.findAlbumsByUser(u.getUsername());
-                    otherUserAlbum.put(u, albums);
+                    otherUserAlbum.put(u.getUsername(), albums);
                 }
             }
 
