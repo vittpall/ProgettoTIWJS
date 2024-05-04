@@ -35,7 +35,7 @@ import java.util.Date;
 public class CreateAlbum extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
-    private String folderPath = "";
+    private String folderPath = "";  
 
     public void init() throws ServletException {
     	try {
@@ -48,7 +48,9 @@ public class CreateAlbum extends HttpServlet {
             connection = DriverManager.getConnection(url, user, password);
 
             // Ensure the directory path is properly initialized and accessible
-            folderPath = context.getRealPath("/images/");
+           folderPath = context.getRealPath("/images/");
+           System.out.println(folderPath);
+       //     folderPath = getServletContext().getInitParameter("outputpath");
             File imagesDir = new File(folderPath);
             if (!imagesDir.exists()) {
                 imagesDir.mkdirs();
@@ -129,7 +131,7 @@ public class CreateAlbum extends HttpServlet {
         }
 
         handleImageUpload(request, response, user, title);
-        response.sendRedirect(path);
+    //    response.sendRedirect(path);
     }
 
     private void handleImageUpload(HttpServletRequest request, HttpServletResponse response, User user, String title)
@@ -142,7 +144,7 @@ public class CreateAlbum extends HttpServlet {
             File file = new File(outputPath);
 
             try (InputStream input = filePart.getInputStream()) {
-            	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
+      //      	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
                 Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
             } catch (IOException e) {
