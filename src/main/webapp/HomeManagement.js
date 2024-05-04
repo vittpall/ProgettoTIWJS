@@ -285,14 +285,14 @@ function SelectedAlbum() {
 
 		prevButton.addEventListener('click', () => {
 			if (startIndex > 0) {
-				// displayPhotos(startIndex - 5);
-				this.update(imagesCommentToShow, startIndex - 5); // Use self.update to recursively call update function
+			
+				this.update(imagesCommentToShow, startIndex - 5);
 			}
 		});
 		nextButton.addEventListener('click', () => {
 			if (startIndex + 5 < imagesCommentToShow.length) {
-				// displayPhotos(startIndex + 5);
-				this.update(imagesCommentToShow, startIndex + 5); // Use self.update to recursively call update function
+			
+				this.update(imagesCommentToShow, startIndex + 5);
 			}
 		});
 	}
@@ -306,7 +306,7 @@ function SelectedAlbum() {
 
 		modal.style.display = "block";
 		modalImg.src = "/ProgettoTIWJS" + image.System_Path;
-		captionText.innerHTML = `<strong>${image.Title}</strong><p>${image.Image_Id}</p>`;
+		captionText.innerHTML = `<strong>${image.Title}</strong>`;
 
 		displayComments(image.Comments, currentAlbumTitle, image.Image_Id, image);
 		//commentsContainer.style.display = "block";
