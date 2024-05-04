@@ -10,7 +10,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -44,6 +49,20 @@ public class GoToHomePage extends HttpServlet {
 
     public void init() throws ServletException {
         		connection = ConnectionHandler.getConnection(getServletContext());
+        		ServletContext context = getServletContext();
+                // Ensure the directory path is properly initialized and accessible
+                String folderPath = context.getRealPath("/images/");
+                String folderPathToCopyFrom = getServletContext().getInitParameter("outputpath");
+      
+                 File imagesDir = new File(folderPath);
+                 if (!imagesDir.exists()) {
+                     imagesDir.mkdirs();
+                 }
+                 
+                 Path sourceDir = Paths.get(folderPathToCopyFrom);
+                 Path targetDir = Paths.get(folderPath);
+                 
+                 CopyFileToDeployedFolder(sourceDir, targetDir);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -108,6 +127,30 @@ public class GoToHomePage extends HttpServlet {
                 connection.close();
             }
         } catch (SQLException sqle) {
+        }
+    }
+    
+    private void CopyFileToDeployedFolder(Path sourceDir, Path targetDir)
+    {
+        try {
+            // Create the target directory if it doesn't exist
+            Files.createDirectories(targetDir);
+
+            // Copy all files from the source directory to the target directory
+            Files.walk(sourceDir)
+                 .filter(Files::isRegularFile)
+                 .forEach(source -> {
+                     Path target = targetDir.resolve(sourceDir.relativize(source));
+                     try {
+                         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+                     } catch (IOException e) {
+                         System.err.println("Failed to copy " + source + " to " + target + ": " + e);
+                     }
+                 });
+
+            System.out.println("All files copied successfully!");
+        } catch (IOException e) {
+            System.err.println("Failed to copy files: " + e);
         }
     }
 }

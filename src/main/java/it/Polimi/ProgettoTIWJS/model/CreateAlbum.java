@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -35,7 +36,8 @@ import java.util.Date;
 public class CreateAlbum extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private Connection connection = null;
-    private String folderPath = "";  
+    private String folderPath = "";
+    private String folderPathToCopyFrom = "";
 
     public void init() throws ServletException {
     	try {
@@ -48,13 +50,28 @@ public class CreateAlbum extends HttpServlet {
             connection = DriverManager.getConnection(url, user, password);
 
             // Ensure the directory path is properly initialized and accessible
+<<<<<<< Updated upstream
            folderPath = context.getRealPath("/Images/");
            System.out.println(folderPath);
        //     folderPath = getServletContext().getInitParameter("outputpath");
+=======
+           folderPath = context.getRealPath("/images/");
+       //    System.out.println(folderPath);
+           folderPathToCopyFrom = getServletContext().getInitParameter("outputpath");
+ 
+>>>>>>> Stashed changes
             File imagesDir = new File(folderPath);
             if (!imagesDir.exists()) {
                 imagesDir.mkdirs();
             }
+            
+            /*
+            Path sourceDir = Paths.get(folderPathToCopyFrom);
+            Path targetDir = Paths.get(folderPath);
+            */
+            //CopyFileToDeployedFolder(sourceDir, targetDir);
+            
+            
         } catch (ClassNotFoundException | SQLException e) {
             throw new UnavailableException("Cannot load database driver or establish connection: " + e.getMessage());
         }
@@ -62,7 +79,7 @@ public class CreateAlbum extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = getServletContext().getContextPath() + "/GoToHomePage";
+     //   String path = getServletContext().getContextPath() + "/GoToHomePage";
         String[] selectedImages = request.getParameterValues("selectedImages");
         
         User user = (User) request.getSession().getAttribute("user");
@@ -141,15 +158,33 @@ public class CreateAlbum extends HttpServlet {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String uniqueFileName = System.currentTimeMillis() + "_" + fileName;
             String outputPath = folderPath + uniqueFileName;
+            String outputPathBackup = folderPathToCopyFrom + uniqueFileName;
             File file = new File(outputPath);
+            File fileBackup = new File(outputPathBackup);
 
             try (InputStream input = filePart.getInputStream()) {
-      //      	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
+     //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
                 Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+<<<<<<< Updated upstream
                 storeImageDetails(fileName, "/Images/" + uniqueFileName, title, user.getId());
+=======
+     
+           //     Files.copy(input, fileBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
+>>>>>>> Stashed changes
             } catch (IOException e) {
                 throw new ServletException("Error while saving file: " + e.getMessage(), e);
             }
+            try (InputStream input = filePart.getInputStream()) {
+     //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
+            //    Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+     
+                Files.copy(input, fileBackup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+           //     storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
+            } catch (IOException e) {
+                throw new ServletException("Error while saving file: " + e.getMessage(), e);
+            }
+            
         }
     }
 
@@ -179,4 +214,30 @@ public class CreateAlbum extends HttpServlet {
             e.printStackTrace();
         }
     }
+    
+    /*
+    private void CopyFileToDeployedFolder(Path sourceDir, Path targetDir)
+    {
+        try {
+            // Create the target directory if it doesn't exist
+            Files.createDirectories(targetDir);
+
+            // Copy all files from the source directory to the target directory
+            Files.walk(sourceDir)
+                 .filter(Files::isRegularFile)
+                 .forEach(source -> {
+                     Path target = targetDir.resolve(sourceDir.relativize(source));
+                     try {
+                         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+                     } catch (IOException e) {
+                         System.err.println("Failed to copy " + source + " to " + target + ": " + e);
+                     }
+                 });
+
+            System.out.println("All files copied successfully!");
+        } catch (IOException e) {
+            System.err.println("Failed to copy files: " + e);
+        }
+    }
+    */
 }
