@@ -1,4 +1,5 @@
 //in this way the variables end up in the global scope, add curly braces to prevent this
+
 let userWelcomeMessage, allAlbumToShow, selectedAlbum, selectedImage,
 pageOrchestrator = new PageOrchestrator();
 
@@ -59,10 +60,12 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 					userAlbumToShow = responseData.userAlbumJson;
 					otherAlbumToShow = responseData.otherUserAlbumJson;
 					userImages = responseData.imageUserJson;
+					self.populateForm(userImages);
 					//console.log(userImages);
 					//imageUserToShow = responseData.imageUserJson;
 				}
 				console.log(otherAlbumToShow)
+				//allImages = responseData.imageUserJson; // Assuming this is where images are fetched
 				self.updateAlbum(userAlbumToShow, self.userAlbum);
 				self.updateOtherAlbum(otherAlbumToShow, self.otherAlbum);
 				self.populateForm(userImages);
@@ -79,7 +82,12 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	this.populateForm =  function populateCheckboxes(options) {
 	    var checkboxContainer = document.getElementById('checkboxContainer');
 	    checkboxContainer.innerHTML = ''; // Clear previous checkboxes
-	
+		/*if (!Array.isArray(options)) {  // Check if options is an array
+        	console.error("Expected an array for options, received:", options);
+        	options = []; // Ensure we have an array to avoid further errors
+        	checkboxContainer.textContent = 'No images available to display.';
+        	return;  // Exit the function if no data to process
+    	} */
 	    options.forEach(option => {
 	      var checkbox = document.createElement('input');
 	      checkbox.type = 'checkbox';
@@ -246,6 +254,8 @@ function SelectedAlbum() {
 	this.show = function (albumTitle, albumCreator) {
 		currentAlbumTitle = albumTitle;
 		var self = this;
+		// Update sessionStorage with current album creator
+        sessionStorage.setItem('albumCreator', albumCreator);
 		// Hide album sections and show image details
 		document.getElementById('albumSection').style.display = 'none';
 		document.getElementById('imageDetailsSection').style.display = 'block';
@@ -312,8 +322,12 @@ function SelectedAlbum() {
 		modal.style.display = "block";
 		modalImg.src = "/ProgettoTIWJS" + image.System_Path;
 		captionText.innerHTML = `<strong>${image.Title}</strong>`;
-
-		displayComments(image.Comments, currentAlbumTitle, image.Image_Id, image);
+		console.log(image);
+		displayComments(image.Comments || [], currentAlbumTitle, image.Image_Id);
+		console.log(image.Comments);
+		
+		
+		
 		//commentsContainer.style.display = "block";
 		// Add event listener for close button
 		var closeButton = document.querySelector('.close');
@@ -401,7 +415,7 @@ function SelectedAlbum() {
 	    commentsContainer.appendChild(commentForm);
 	    
 	} */
-	function displayComments(comments, albumTitle, imageId, image) {
+	function displayComments(comments, albumTitle, imageId) {
     const commentsContainer = document.getElementById('commentsContainer');
     commentsContainer.innerHTML = ''; // Clear previous contents
     const commentList = document.createElement('ul');
@@ -469,14 +483,31 @@ function handleAddComment(commentForm, commentInput, albumTitle, imageId) {
         if (req.readyState === XMLHttpRequest.DONE) {
             if (req.status === 200) {
                 const updatedComments = JSON.parse(req.responseText);
+                console.log(updatedComments);
+               // updateImageComments(imageId, updatedComments);
+               // const image = findImageById(imageId);
+                
                 displayComments(updatedComments, albumTitle, imageId);
                 commentInput.value = '';  // Clear the input field
+                // Refresh the album details to simulate coming from selecting an album
+                selectedAlbum.show(albumTitle, sessionStorage.getItem('albumCreator'));
             } else {
                 alert("Failed to add comment: " + req.statusText);
             }
         }
     }, false);
 }
+/*
+function updateImageComments(imageId, newComments) {
+    const image = findImageById(imageId);
+    if (image) {
+        image.Comments = newComments;
+    }
+}
+function findImageById(imageId) {
+    return allImages.find(img => img.Image_Id === parseInt(imageId));
+}
+*/
 
 function backToHomePage(){
 	document.getElementById("backToHomePage").addEventListener("click", () =>
