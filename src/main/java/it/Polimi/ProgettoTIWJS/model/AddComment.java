@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 import it.Polimi.ProgettoTIWJS.beans.User;
 import it.Polimi.ProgettoTIWJS.Utils.ConnectionHandler;
@@ -87,9 +88,11 @@ public class AddComment extends HttpServlet {
           
            
             commentDao.addComment(comment); 
+            
+            List<Comment> updatedComments = commentDao.findCommentsByImage(imageId);
             // Convert the Comment object to JSON
             Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
-            String jsonComment = gson.toJson(comment);
+            String jsonComment = gson.toJson(updatedComments);
 
             // Set the response type and character encoding
             response.setContentType("application/json");

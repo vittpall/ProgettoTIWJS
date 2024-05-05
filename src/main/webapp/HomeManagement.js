@@ -251,11 +251,12 @@ function SelectedAlbum() {
 				if (req.readyState == 4) {
 					var message = req.responseText;
 					if (req.status == 200) {
-						responseData = JSON.parse(req.responseText);
-						console.log("Response Data:", responseData);
-					}
-					self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
+						var responseData = JSON.parse(req.responseText);
+						console.log("Response Data2:", responseData);
+						self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
 
+					}
+					
 				} else if (req.status == 403) {
 					window.location.href = "index.html";
 					window.sessionStorage.removeItem('username');
