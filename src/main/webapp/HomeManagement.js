@@ -42,6 +42,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		this.otherAlbum.style.visibility = "hidden";
 		this.addAlbumForm.style.visibility = "hidden";
 	}
+
 	
 	this.show = function()
 	{
@@ -118,7 +119,8 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		        anchor.setAttribute("albumTitle", album.Title);
 		        anchor.addEventListener("click", function() {
 		        	console.log("Album Creator:", album.User_id); 
-					selectedAlbum.show(album.Title, album.User_id);
+					var newSelected = new SelectedAlbum();
+					newSelected.show(album.Title, album.User_id);
 	        });
 	
 	        listItem.appendChild(anchor);
@@ -151,7 +153,8 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	            anchor.setAttribute("albumTitle", album.Title);
 	            anchor.addEventListener("click", function() {
 	                console.log("Album Creator:", username);
-	                selectedAlbum.show(album.Title, username);
+	                var newSelected = new SelectedAlbum();
+	                newSelected.show(album.Title, album.User_id);
 	            });
 	
 	            listItem.appendChild(anchor);
@@ -239,6 +242,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 
 function SelectedAlbum() {
 	var currentAlbumTitle, currentImageId;
+	
 	this.show = function (albumTitle, albumCreator) {
 		currentAlbumTitle = albumTitle;
 		var self = this;
@@ -254,7 +258,6 @@ function SelectedAlbum() {
 						var responseData = JSON.parse(req.responseText);
 						console.log("Response Data2:", responseData);
 						self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
-
 					}
 					
 				} else if (req.status == 403) {
@@ -263,7 +266,8 @@ function SelectedAlbum() {
 				}
 			})
 	}
-
+	
+	
 	this.update = function (imagesCommentToShow, startIndex) {
 		const photoContainer = document.getElementById('photoContainer');
 		photoContainer.innerHTML = '';
@@ -474,7 +478,14 @@ function handleAddComment(commentForm, commentInput, albumTitle, imageId) {
     }, false);
 }
 
-
+function backToHomePage(){
+	document.getElementById("backToHomePage").addEventListener("click", () =>
+	{
+			console.log("ciao");
+			document.getElementById("imageDetailsSection").style.display = "none";
+			document.getElementById("albumSection").style.display = "block";
+	})
+}
 	
 
 function PageOrchestrator()
@@ -485,6 +496,7 @@ function PageOrchestrator()
         userWelcomeMessage.show();
 		allAlbumToShow = new AllAlbumToShow(document.getElementById('alertContainer'), document.getElementById('userAlbumContainer'), document.getElementById('otherAlbumContainer'), document.getElementById('addAlbumForm'));
 		allAlbumToShow.show();
+		backToHomePage();
 		
 	//	userAlbum = new UserAlbum();
 	//	otherAlbum = new OtherAlbum();
@@ -497,7 +509,7 @@ function PageOrchestrator()
 	
 	this.refresh = function(albumTitle){
 		allAlbumToShow.show();
-		allAlbumToShow.autoclick(albumTitle);
+	//	allAlbumToShow.autoclick(albumTitle);
 		allAlbumToShow.refreshAlbums();
 	}
 	
