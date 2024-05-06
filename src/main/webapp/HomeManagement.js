@@ -268,6 +268,7 @@ function SelectedAlbum() {
 						var responseData = JSON.parse(req.responseText);
 						console.log("Response Data2:", responseData);
 						self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
+						unCoverBackToHomePage(false);
 					}
 					
 				} else if (req.status == 403) {
@@ -515,7 +516,14 @@ function backToHomePage(){
 			console.log("ciao");
 			document.getElementById("imageDetailsSection").style.display = "none";
 			document.getElementById("albumSection").style.display = "block";
+			document.getElementById("backToHomePage").style.display = "none";
 	})
+}
+
+function unCoverBackToHomePage(hide){
+
+		document.getElementById("backToHomePage").style.display = "block";	
+
 }
 	
 
@@ -528,6 +536,7 @@ function PageOrchestrator()
 		allAlbumToShow = new AllAlbumToShow(document.getElementById('alertContainer'), document.getElementById('userAlbumContainer'), document.getElementById('otherAlbumContainer'), document.getElementById('addAlbumForm'));
 		allAlbumToShow.show();
 		backToHomePage();
+
 		
 	//	userAlbum = new UserAlbum();
 	//	otherAlbum = new OtherAlbum();
