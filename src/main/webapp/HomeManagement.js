@@ -268,7 +268,7 @@ function SelectedAlbum() {
 						var responseData = JSON.parse(req.responseText);
 						console.log("Response Data2:", responseData);
 						self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
-						unCoverBackToHomePage(false);
+						unCoverBackToHomePage();
 					}
 					
 				} else if (req.status == 403) {
@@ -520,11 +520,40 @@ function backToHomePage(){
 	})
 }
 
-function unCoverBackToHomePage(hide){
+function unCoverBackToHomePage(){
 
 		document.getElementById("backToHomePage").style.display = "block";	
 
 }
+
+function logout(){
+	//synch call to logout servlet
+	    document.getElementById("logoutLink").addEventListener('click', () => {
+	         makeCall("GET", 'Logout',null,
+        		function(x) {
+          			if (x.readyState == XMLHttpRequest.DONE) {
+           			var message = x.responseText;
+            		switch (x.status) {
+              			case 200:
+            			sessionStorage.removeItem('username', message);
+                		window.location.href = "index.html";
+                	break;
+              		case 400: // bad request
+                		document.getElementById("loginError").textContent = message;
+                	break;
+              		case 401: // unauthorized
+                  		document.getElementById("loginError").textContent = message;
+                  	break;
+              			case 500: // server error
+            			document.getElementById("loginError").textContent = message;
+                	break;
+            	}
+          	}
+        	}
+        	);
+        })
+	     
+};
 	
 
 function PageOrchestrator()
@@ -536,6 +565,7 @@ function PageOrchestrator()
 		allAlbumToShow = new AllAlbumToShow(document.getElementById('alertContainer'), document.getElementById('userAlbumContainer'), document.getElementById('otherAlbumContainer'), document.getElementById('addAlbumForm'));
 		allAlbumToShow.show();
 		backToHomePage();
+		logout();
 
 		
 	//	userAlbum = new UserAlbum();
