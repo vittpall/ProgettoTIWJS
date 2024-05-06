@@ -266,6 +266,7 @@ function SelectedAlbum() {
 					var message = req.responseText;
 					if (req.status == 200) {
 						var responseData = JSON.parse(req.responseText);
+						imagesData = responseData; // Store the response data for later use
 						console.log("Response Data2:", responseData);
 						self.update(responseData, 0); // Initial index 0 to start showing images from the beginning
 						unCoverBackToHomePage();
@@ -287,13 +288,14 @@ function SelectedAlbum() {
 			const photoElement = document.createElement('img');
 			currentImageId = image.Image_Id;  // Update current image ID
 			photoElement.src = "/ProgettoTIWJS" + image.System_Path;
+			photoElement.setAttribute('data-id', image.Image_Id); // Ensure each image has an ID for reordering
 			console.log(photoElement.src);
 			photoElement.classList.add('photo-thumbnail');
 			//photoElement.onclick = () => this.showModal(image);
 			photoElement.addEventListener("mouseover", () => this.showModal(image)); // Changed to 'mouseover'
 			photoContainer.appendChild(photoElement);
 		}
-
+		// Update buttons visibility based on data length
 		const prevButton = document.getElementById('prevButton');
 		const nextButton = document.getElementById('nextButton');
 		prevButton.disabled = startIndex === 0;
@@ -301,17 +303,45 @@ function SelectedAlbum() {
 
 		prevButton.addEventListener('click', () => {
 			if (startIndex > 0) {
-			
+
 				this.update(imagesCommentToShow, startIndex - 5);
 			}
 		});
 		nextButton.addEventListener('click', () => {
 			if (startIndex + 5 < imagesCommentToShow.length) {
-			
+
 				this.update(imagesCommentToShow, startIndex + 5);
 			}
 		});
-	}
+	};
+	
+	this.showReorderView = function () {
+        const listContainer = document.getElementById('photoContainer');
+        listContainer.innerHTML = ''; // Clear current images
+        // Convert images to sortable list items
+        imagesData.forEach(image => {
+            const listItem = document.createElement('div');
+            listItem.textContent = image.Title;
+            listItem.setAttribute('data-id', image.Image_Id);
+            listItem.classList.add('sortable-item');
+            listContainer.appendChild(listItem);
+        });
+        // Initialize sortable
+        Sortable.create(listContainer, { animation: 150 });
+        document.getElementById('saveOrderButton').style.display = 'inline-block'; // Show save button
+    };
+    
+    this.saveNewOrder = function () {
+        const listContainer = document.getElementById('photoContainer');
+        const orderedIds = Array.from(listContainer.children).map(item => item.getAttribute('data-id'));
+        console.log('New Order:', orderedIds);
+		// Reorder imagesData based on the new order
+		
+        // Here makecall to save this order in the backend
+        document.getElementById('saveOrderButton').style.display = 'none'; // Hide save button
+        this.update(imagesData, 0); // Optionally re-render the images in the new order
+    };
+
 
 	this.showModal = function (image) {
 		currentImageId = image.Image_Id;  // Update current image ID when modal is shown
@@ -336,6 +366,7 @@ function SelectedAlbum() {
 			selectedAlbum.closeModal();
 		});
 	};
+
 	this.closeModal = function () {
 		const modal = document.getElementById('imageModal');
 		modal.style.display = "none";
@@ -344,78 +375,7 @@ function SelectedAlbum() {
 		document.getElementById('imageDetailsSection').style.display = 'block';
 	};
 }
-    /*
-	// Function to display comments for a specific photo
-	function displayComments(comments, albumTitle, imageId, image) {
-	    const commentsContainer = document.getElementById('commentsContainer');
-	    commentsContainer.innerHTML = '';
-	    if (!Array.isArray(comments)) {
-        	comments = [];  // Ensure comments is an array, even if it's empty
-    	}
-	    const commentList = document.createElement('ul');
-	    comments.forEach(comment => {
-	        const listItem = document.createElement('li');
-	        listItem.textContent = comment.Text;
-	        commentList.appendChild(listItem);
-	    });
-	    commentsContainer.appendChild(commentList);
-	    // Scroll to the bottom of the container to ensure the form is visible
-    commentsContainer.scrollTop = commentsContainer.scrollHeight;
-	
-	    const commentForm = document.createElement('form');
-	    const commentInput = document.createElement('input');
-	    commentInput.setAttribute('type', 'text');
-	    commentInput.setAttribute('name', 'comment');  // Ensure the name attribute is set for proper FormData handling
-	    commentInput.setAttribute('placeholder', 'Add a comment');
-	    
-	    // Input for album title, included even if hidden for future use
-    	const albumTitleInput = document.createElement('input');
-    	albumTitleInput.setAttribute('type', 'hidden');
-    	albumTitleInput.setAttribute('name', 'albumTitle');
-    	albumTitleInput.value = albumTitle;
 
-    	// Input for image ID
-    	const imageIdInput = document.createElement('input');
-    	imageIdInput.setAttribute('type', 'hidden');
-    	imageIdInput.setAttribute('name', 'imageId');
-    	imageIdInput.value = imageId;
-    	console.log("Image ID Input Value:", imageIdInput.value);
-
-	    const addButton = document.createElement('button');
-	    addButton.textContent = 'Add Comment';
-	    addButton.type = 'submit';
-
-	    addButton.addEventListener('click', (event) => {
-	        event.preventDefault();
-	        const newComment = commentInput.value;
-	        if (newComment === ''){
-	        	alert('Comment cannot be empty!');
-            return;
-	        }
-	        if (newComment.trim() !== '') {
-            	commentForm.appendChild(albumTitleInput);
-            	commentForm.appendChild(imageIdInput);
-            	makeCall('POST', 'AddComment', commentForm, function(req) {
-        		if (req.readyState === XMLHttpRequest.DONE) {
-            		if (req.status === 200) {
-                		const updatedComments = JSON.parse(req.responseText);
-                		displayComments(updatedComments, albumTitle, imageId);  // Re-render comments
-                		//selectedAlbum.refreshComments(updatedComments.comments); // Refresh comments using data returned from AddComment
-
-                		commentInput.value = '';  // Clear the input field
-            		} else {
-                		alert("Failed to add comment: " + req.statusText);
-            		}
-        		}
-    		}, false);  // Set 'reset' to false to not reset the form automatically
-
-	        }
-	    });
-	    commentForm.appendChild(commentInput);
-	    commentForm.appendChild(addButton);
-	    commentsContainer.appendChild(commentForm);
-	    
-	} */
 	function displayComments(comments, albumTitle, imageId) {
     const commentsContainer = document.getElementById('commentsContainer');
     commentsContainer.innerHTML = ''; // Clear previous contents
@@ -520,6 +480,7 @@ function backToHomePage(){
 	})
 }
 
+
 function unCoverBackToHomePage(){
 
 		document.getElementById("backToHomePage").style.display = "block";	
@@ -554,6 +515,7 @@ function logout(){
         })
 	     
 };
+
 	
 
 function PageOrchestrator()
@@ -584,3 +546,10 @@ function PageOrchestrator()
 	}
 	
 }
+	document.getElementById('reorderButton').addEventListener('click', function() {
+    selectedAlbum.showReorderView();
+});
+
+document.getElementById('saveOrderButton').addEventListener('click', function() {
+    selectedAlbum.saveNewOrder();
+});
