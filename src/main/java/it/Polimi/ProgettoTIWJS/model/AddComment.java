@@ -128,6 +128,8 @@ public class AddComment extends HttpServlet {
         }
         
         User user = (User) request.getSession().getAttribute("user");
+        System.out.println((User) request.getSession().getAttribute("username"));
+        System.out.println((User) request.getSession().getAttribute("user"));
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println("User not logged in");
@@ -141,15 +143,7 @@ public class AddComment extends HttpServlet {
             response.getWriter().println("Error adding the comment: " + e.getMessage());
 		}
     	
-    	if(user.getId() != imageCreator)
-    	{
-    		System.out.println("users not authorized to delete the image");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().println("User not logged in");
-            return;
-    	}
-    	else
-    	{
+    	
             try {
             	
             	commentsDao.deleteAllComment(imageId);
@@ -163,7 +157,7 @@ public class AddComment extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().println("Error while deleting comment");
             }
-    	}
+    	
     	
     	
     }
