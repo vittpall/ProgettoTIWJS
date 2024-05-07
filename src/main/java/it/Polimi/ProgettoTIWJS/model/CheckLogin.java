@@ -10,6 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -63,11 +66,13 @@ public class CheckLogin extends HttpServlet {
     		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().println("Incorrect credentials");
         } else {
-            session.setAttribute("user", user);
-            response.setStatus(HttpServletResponse.SC_OK);
+            session.setAttribute("user", user); 
+          
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().println(usrn);         
+            response.getWriter().println(user.getId()); 
+            System.out.println("current user" + user.getUsername());
+            response.setStatus(HttpServletResponse.SC_OK);
         }
     }
 

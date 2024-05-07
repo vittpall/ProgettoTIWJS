@@ -249,10 +249,11 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 }
 
 function SelectedAlbum() {
-	var currentAlbumTitle, currentImageId;
+	var currentAlbumTitle, currentImageId, albumCreator;
 	
 	this.show = function (albumTitle, albumCreator) {
 		currentAlbumTitle = albumTitle;
+		this.albumCreator = albumCreator;
 		var self = this;
 		// Update sessionStorage with current album creator
         sessionStorage.setItem('albumCreator', albumCreator);
@@ -354,7 +355,7 @@ function SelectedAlbum() {
 		modalImg.src = "/ProgettoTIWJS" + image.System_Path;
 		captionText.innerHTML = `<strong>${image.Title}</strong>`;
 		console.log(image);
-		displayComments(image.Comments || [], currentAlbumTitle, image.Image_Id);
+		displayComments(image.Comments || [], currentAlbumTitle, image.Image_Id, this.albumCreator);
 		console.log(image.Comments);
 		
 		
@@ -376,7 +377,7 @@ function SelectedAlbum() {
 	};
 }
 
-	function displayComments(comments, albumTitle, imageId) {
+	function displayComments(comments, albumTitle, imageId, albumCreator) {
     const commentsContainer = document.getElementById('commentsContainer');
     commentsContainer.innerHTML = ''; // Clear previous contents
     const commentList = document.createElement('ul');
@@ -394,14 +395,14 @@ function SelectedAlbum() {
     commentsContainer.appendChild(commentList);
 
     // Add the comment form
-    const commentForm = createCommentForm(albumTitle, imageId);
+    const commentForm = createCommentForm(albumTitle, imageId, albumCreator);
     commentsContainer.appendChild(commentForm);
 
     // Scroll to the bottom of the container to ensure the form is visible
     commentsContainer.scrollTop = commentsContainer.scrollHeight;
 }
 
-function createCommentForm(albumTitle, imageId) {
+function createCommentForm(albumTitle, imageId, albumCreator) {
     const commentForm = document.createElement('form');
     const commentInput = document.createElement('input');
     commentInput.type = 'text';
@@ -417,6 +418,18 @@ function createCommentForm(albumTitle, imageId) {
     imageIdInput.type = 'hidden';
     imageIdInput.name = 'imageId';
     imageIdInput.value = imageId;
+    
+    if(albumCreator == sessionStorage.getItem("username"))
+    {
+		var removeImageCommentButton = document.createElement('button');
+    	removeImageCommentButton.textContent = 'Remove Image';
+    	removeImageCommentButton.type = 'submit';
+    	removeImageCommentButton.addEventListener("click", function(){
+			console.log("cancella commento")
+			handleRemoveImage(albumTitle, imageId);
+		})
+	}
+ 
 
     const addButton = document.createElement('button');
     addButton.textContent = 'Add Comment';
@@ -430,8 +443,29 @@ function createCommentForm(albumTitle, imageId) {
     commentForm.appendChild(albumTitleInput);
     commentForm.appendChild(imageIdInput);
     commentForm.appendChild(addButton);
+    if(albumCreator == sessionStorage.getItem("username"))
+    	commentForm.appendChild(removeImageCommentButton);
 
     return commentForm;
+}
+
+function handleRemoveImage(albumTitle, imageId)
+{
+	console.log("cancella commento")
+			makeCall("GET", "AddComment?albumTitle=" + encodeURIComponent(albumTitle) + "&imageId=" + encodeURIComponent(imageId), null,
+			function (req) {
+				if (req.readyState == 4) {
+					var message = req.responseText;
+					if (req.status == 200) {
+						console.log("ciao");
+						
+					}
+					
+				} else if (req.status == 403) {
+					window.location.href = "index.html";
+					window.sessionStorage.removeItem('username');
+				}
+			})
 }
 
 function handleAddComment(commentForm, commentInput, albumTitle, imageId) {

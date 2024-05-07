@@ -112,8 +112,8 @@ public class AddComment extends HttpServlet {
     	//consider that i cannot retriever userId from the image id
     	ImageDAO imageDao = new ImageDAO(connection);
     	CommentDAO commentsDao = new CommentDAO(connection);
-    	String albumTitle = request.getParameter("albumTitle");
-    	String image_id = request.getParameter("imageId");
+    	String albumTitle = StringEscapeUtils.escapeJava(request.getParameter("albumTitle"));
+    	String image_id = StringEscapeUtils.escapeJava(request.getParameter("imageId"));
     	
     	int imageCreator = 0;
     	
@@ -157,7 +157,8 @@ public class AddComment extends HttpServlet {
             	imageDao.DeleteFromAlbum(imageId, albumTitle);
             	
             	System.out.println("Comment succesfully deleted");
-            	response.sendRedirect(getServletContext().getContextPath() + "/GoToAlbumPage?albumTitle=" + albumTitle + "&albumCreator=" + user.getId());
+            	response.setStatus(HttpServletResponse.SC_OK);
+            //	response.sendRedirect(getServletContext().getContextPath() + "/GoToAlbumPage?albumTitle=" + albumTitle + "&albumCreator=" + user.getId());
             } catch (SQLException e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.getWriter().println("Error while deleting comment");

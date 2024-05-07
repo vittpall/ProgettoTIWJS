@@ -14,6 +14,7 @@
             switch (x.status) {
               case 200:
             	sessionStorage.setItem('username', message);
+				console.log(message)
                 window.location.href = "Home.html";
                 break;
               case 400: // bad request
