@@ -128,14 +128,16 @@ public class AddComment extends HttpServlet {
         }
         
         User user = (User) request.getSession().getAttribute("user");
+        
         System.out.println((User) request.getSession().getAttribute("username"));
         System.out.println((User) request.getSession().getAttribute("user"));
+
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println("User not logged in");
             return;
         }
-        
+
     	try {
 			imageCreator = imageDao.CheckCreator(imageId);
 		} catch (SQLException e) {

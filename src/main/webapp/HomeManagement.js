@@ -451,21 +451,21 @@ function createCommentForm(albumTitle, imageId, albumCreator) {
 
 function handleRemoveImage(albumTitle, imageId)
 {
-	console.log("cancella commento")
-			makeCall("GET", "AddComment?albumTitle=" + encodeURIComponent(albumTitle) + "&imageId=" + encodeURIComponent(imageId), null,
+			makeCall('GET', "AddComment?albumTitle=" + encodeURIComponent(albumTitle) + "&imageId=" + encodeURIComponent(imageId), null,
 			function (req) {
 				if (req.readyState == 4) {
 					var message = req.responseText;
 					if (req.status == 200) {
-						console.log("ciao");
-						
+						selectedAlbum.show(albumTitle, sessionStorage.getItem("albumCreator"));
+						selectedAlbum.closeModal();
+						allAlbumToShow.show();
 					}
 					
 				} else if (req.status == 403) {
 					window.location.href = "index.html";
 					window.sessionStorage.removeItem('username');
 				}
-			})
+			}, false)
 }
 
 function handleAddComment(commentForm, commentInput, albumTitle, imageId) {
