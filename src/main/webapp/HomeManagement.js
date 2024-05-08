@@ -252,11 +252,12 @@ function SelectedAlbum() {
 	var currentAlbumTitle, currentImageId, albumCreator;
 	
 	this.show = function (albumTitle, albumCreator) {
-		currentAlbumTitle = albumTitle;
+		this.currentAlbumTitle = albumTitle;
 		this.albumCreator = albumCreator;
 		var self = this;
 		// Update sessionStorage with current album creator
         sessionStorage.setItem('albumCreator', albumCreator);
+        sessionStorage.setItem('currentAlbumTitle', albumTitle);
 		// Hide album sections and show image details
 		document.getElementById('albumSection').style.display = 'none';
 		document.getElementById('imageDetailsSection').style.display = 'block';
@@ -315,7 +316,7 @@ function SelectedAlbum() {
 			}
 		});
 	};
-	
+	/*
 	this.showReorderView = function () {
         const listContainer = document.getElementById('photoContainer');
         listContainer.innerHTML = ''; // Clear current images
@@ -330,8 +331,35 @@ function SelectedAlbum() {
         // Initialize sortable
         Sortable.create(listContainer, { animation: 150 });
         document.getElementById('saveOrderButton').style.display = 'inline-block'; // Show save button
-    };
-    
+    }; */
+    this.showReorderView = function() {
+    const listContainer = document.getElementById('photoContainer');
+    listContainer.innerHTML = ''; // Clear current images
+
+    // Map the current order from sessionStorage or default
+    const imageOrder = sessionStorage.getItem('customOrder' + currentAlbumTitle) ? JSON.parse(sessionStorage.getItem('customOrder' + currentAlbumTitle)) : imagesData;
+    imageOrder.forEach(image => {
+        const listItem = document.createElement('div');
+        listItem.textContent = image.Title;
+        listItem.setAttribute('data-id', image.Image_Id);
+        listItem.classList.add('sortable-item');
+        listContainer.appendChild(listItem);
+    });
+
+    Sortable.create(listContainer, {
+        animation: 150,
+        store: {
+            set: function(sortable) {
+                var order = sortable.toArray();
+                sessionStorage.setItem('customOrder' + currentAlbumTitle, JSON.stringify(order));
+            }
+        }
+    });
+
+    document.getElementById('saveOrderButton').style.display = 'inline-block';
+};
+
+    /*
     this.saveNewOrder = function () {
         const listContainer = document.getElementById('photoContainer');
         const orderedIds = Array.from(listContainer.children).map(item => item.getAttribute('data-id'));
@@ -341,7 +369,62 @@ function SelectedAlbum() {
         // Here makecall to save this order in the backend
         document.getElementById('saveOrderButton').style.display = 'none'; // Hide save button
         this.update(imagesData, 0); // Optionally re-render the images in the new order
-    };
+    }; */
+    
+ 	this.saveNewOrder = function() {
+    const order = JSON.parse(sessionStorage.getItem('customOrder' + currentAlbumTitle));
+    if (!order || order.length === 0) {
+        alert('Order is empty or not defined.');
+        return;
+    }
+    console.log("Order to be saved:", order); 
+    const form = document.createElement('form');
+    form.style.display = 'none'; // Hide the form, it's not needed to be shown
+	var franco = sessionStorage.getItem("currentAlbumTitle");
+	console.log(franco);
+    // Create hidden input for album title
+    var inputTitle = document.createElement('input');
+    inputTitle.setAttribute('type', 'hidden');
+    inputTitle.setAttribute('name', 'albumTitle');
+    inputTitle.setAttribute('value', franco);
+    console.log(currentAlbumTitle);
+    console.log(this.currentAlbumTitle);
+    form.appendChild(inputTitle);
+
+    // Create hidden input for the order, need to stringify since it's an array
+    var inputOrder = document.createElement('input');
+    inputOrder.setAttribute('type', 'hidden');
+    inputOrder.setAttribute('name', 'order');
+    inputOrder.setAttribute('value', JSON.stringify(order)); // Ensure the order is a stringified array
+    form.appendChild(inputOrder);
+
+    // Append form to body to make FormData work correctly
+    document.body.appendChild(form);
+
+    // Call makeCall with the form
+    makeCall("POST", "SaveImageOrder", form, function(response) {
+    if (response.readyState === XMLHttpRequest.DONE) {
+        if (response.status === 200) {
+            alert('Order saved successfully');
+        } else {
+            try {
+                const data = JSON.parse(response.responseText);
+                alert('Error saving order: ' + data.message);
+            } catch (error) {
+                alert('Error parsing error response: ' + error);
+            }
+        }
+    }
+}, false);
+
+
+    // Clean up by removing the form after the request
+    document.body.removeChild(form);
+};
+
+
+
+
 
 
 	this.showModal = function (image) {

@@ -20,7 +20,7 @@ public class ImageDAO {
 
     public List<Image> findImagesByAlbum(String albumTitle, int albumCreator) throws SQLException {
         List<Image> images = new ArrayList<>();
-        String query = "SELECT i.Image_id, i.Title, i.System_Path, i.Creation_Date, i.Description FROM `Image` i, Contains_Images c WHERE i.Image_id = c.Image_Id AND c.title = ? AND c.User_Id = ?";
+        String query = "SELECT i.Image_id, i.Title, i.System_Path, i.Creation_Date, i.Description FROM `Image` i, Contains_Images c WHERE i.Image_id = c.Image_Id AND c.title = ? AND c.User_Id = ? ORDER BY c.Order_Index ASC";
         try (PreparedStatement pstatement = con.prepareStatement(query);) {
             pstatement.setString(1, albumTitle);
             pstatement.setInt(2, albumCreator);
@@ -166,5 +166,20 @@ public class ImageDAO {
 	            pstatement.executeUpdate();
 	     }
 	}
+	public void saveImageOrder(int userId, String albumTitle, List<Integer> order) throws SQLException {
+		System.out.println("Saving order for user: " + userId + " album: " + albumTitle + " with order: " + order); // Log before executing
+		String query = "UPDATE Contains_Images SET Order_Index = ? WHERE User_Id = ? AND title = ? AND Image_Id = ?";
+	    try (PreparedStatement pstatement = con.prepareStatement(query)) {
+	        for (int i = 0; i < order.size(); i++) {
+	            pstatement.setInt(1, i);
+	            pstatement.setInt(2, userId);
+	            pstatement.setString(3, albumTitle);
+	            pstatement.setInt(4, order.get(i));
+	            int affectedRows = pstatement.executeUpdate();
+	            System.out.println("Updated order index for image: " + order.get(i) + " to position: " + i + ", affected rows: " + affectedRows); // Log after executing
+	        }
+	    }
+	}
+
     
 }
