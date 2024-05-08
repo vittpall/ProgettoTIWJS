@@ -74,6 +74,7 @@ public class CreateAlbum extends HttpServlet {
             response.getWriter().println("Album title cannot be empty");
             return;
         }
+        
 
         Album album = new Album();
         album.setTitle(title);
@@ -139,11 +140,11 @@ public class CreateAlbum extends HttpServlet {
             String outputPathBackup = folderPathToCopyFrom + uniqueFileName;
             File file = new File(outputPath);
             File fileBackup = new File(outputPathBackup);
-
+            String description = request.getParameter("description");
             try (InputStream input = filePart.getInputStream()) {
      //       	Files.createDirectories(Paths.get(outputPath).getParent()); // Ensure parent directories exist
                 Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId());
+                storeImageDetails(fileName, "/images/" + uniqueFileName, title, user.getId(),description);
             } catch (IOException e) {
                 throw new ServletException("Error while saving file: " + e.getMessage(), e);
             }
@@ -158,12 +159,13 @@ public class CreateAlbum extends HttpServlet {
         }
     }
 
-    private void storeImageDetails(String fileName, String path, String title, int userId)
+    private void storeImageDetails(String fileName, String path, String title, int userId, String description)
             throws ServletException {
         ImageDAO imageDao = new ImageDAO(connection);
         Image image = new Image();
         image.setCreation_Date(new Date());
         image.setTitle(fileName);
+        image.setDescription(description);
         image.setSystem_Path(path);
 
         try {

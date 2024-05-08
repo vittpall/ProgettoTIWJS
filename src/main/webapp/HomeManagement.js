@@ -432,6 +432,7 @@ function SelectedAlbum() {
 		modal.style.display = "block";
 		modalImg.src = "/ProgettoTIWJS" + image.System_Path;
 		captionText.innerHTML = `<strong>${image.Title}</strong>`;
+		captionText.innerHTML = `<strong>${image.Description}</strong>`;
 		console.log(image);
 		displayComments(image.Comments || [], currentAlbumTitle, image.Image_Id, this.albumCreator);
 		console.log(image.Comments);
