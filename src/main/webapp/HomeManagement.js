@@ -317,6 +317,7 @@ function SelectedAlbum() {
 		});
 	};
 	/*
+	
 	this.showReorderView = function () {
         const listContainer = document.getElementById('photoContainer');
         listContainer.innerHTML = ''; // Clear current images
@@ -332,6 +333,7 @@ function SelectedAlbum() {
         Sortable.create(listContainer, { animation: 150 });
         document.getElementById('saveOrderButton').style.display = 'inline-block'; // Show save button
     }; */
+     /*
     this.showReorderView = function() {
     const listContainer = document.getElementById('photoContainer');
     listContainer.innerHTML = ''; // Clear current images
@@ -357,19 +359,54 @@ function SelectedAlbum() {
     });
 
     document.getElementById('saveOrderButton').style.display = 'inline-block';
+}; 
+ */
+ this.showReorderView = function() {
+    const listContainer = document.getElementById('photoContainer');
+    listContainer.innerHTML = ''; // Clear current images
+
+    // Map the current order from sessionStorage or default
+    let imageOrder;
+    const storedOrder = sessionStorage.getItem('customOrder' + currentAlbumTitle);
+    console.log("storeOrder", storedOrder);
+    if (storedOrder) {
+        const storedOrderIds = JSON.parse(storedOrder);
+        // Find images in imagesData by ID and ensure complete image data is used
+        imageOrder = storedOrderIds.map(id => imagesData.find(image => image.Image_Id === id)).filter(image => image);
+    } else {
+        imageOrder = imagesData; // Default to initial full data set if no custom order set
+    }
+
+    // Check and handle if any images could not be found (e.g., filter result is undefined)
+    if (imageOrder.includes(undefined)) {
+        console.error("Some images could not be found in the original dataset.");
+        imageOrder = imageOrder.filter(image => image !== undefined); // Remove undefined entries
+    }
+
+    imageOrder.forEach(image => {
+    	console.log(image);
+        const listItem = document.createElement('div');
+        listItem.textContent = image.Title; // Ensure titles are used
+        listItem.setAttribute('data-id', image.Image_Id);
+        listItem.classList.add('sortable-item');
+        listContainer.appendChild(listItem);
+    });
+
+    Sortable.create(listContainer, {
+        animation: 150,
+        store: {
+            set: function(sortable) {
+                var order = sortable.toArray();
+                sessionStorage.setItem('customOrder' + currentAlbumTitle, JSON.stringify(order));
+            }
+        }
+    });
+
+    document.getElementById('saveOrderButton').style.display = 'block';
 };
 
-    /*
-    this.saveNewOrder = function () {
-        const listContainer = document.getElementById('photoContainer');
-        const orderedIds = Array.from(listContainer.children).map(item => item.getAttribute('data-id'));
-        console.log('New Order:', orderedIds);
-		// Reorder imagesData based on the new order
-		
-        // Here makecall to save this order in the backend
-        document.getElementById('saveOrderButton').style.display = 'none'; // Hide save button
-        this.update(imagesData, 0); // Optionally re-render the images in the new order
-    }; */
+   
+
     
  	this.saveNewOrder = function() {
     const order = JSON.parse(sessionStorage.getItem('customOrder' + currentAlbumTitle));
@@ -406,6 +443,9 @@ function SelectedAlbum() {
     if (response.readyState === XMLHttpRequest.DONE) {
         if (response.status === 200) {
             alert('Order saved successfully');
+          //  sessionStorage.setItem('customOrder' + currentAlbumTitle, JSON.stringify(order));  // Update session storage only on successful save
+          //  selectedAlbum.showReorderView();
+           
         } else {
             try {
                 const data = JSON.parse(response.responseText);
@@ -419,7 +459,7 @@ function SelectedAlbum() {
 
 
     // Clean up by removing the form after the request
-    document.body.removeChild(form);
+   // document.body.removeChild(form);
 };
 
 
