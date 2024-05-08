@@ -316,51 +316,8 @@ function SelectedAlbum() {
 			}
 		});
 	};
-	/*
 	
-	this.showReorderView = function () {
-        const listContainer = document.getElementById('photoContainer');
-        listContainer.innerHTML = ''; // Clear current images
-        // Convert images to sortable list items
-        imagesData.forEach(image => {
-            const listItem = document.createElement('div');
-            listItem.textContent = image.Title;
-            listItem.setAttribute('data-id', image.Image_Id);
-            listItem.classList.add('sortable-item');
-            listContainer.appendChild(listItem);
-        });
-        // Initialize sortable
-        Sortable.create(listContainer, { animation: 150 });
-        document.getElementById('saveOrderButton').style.display = 'inline-block'; // Show save button
-    }; */
-     /*
-    this.showReorderView = function() {
-    const listContainer = document.getElementById('photoContainer');
-    listContainer.innerHTML = ''; // Clear current images
-
-    // Map the current order from sessionStorage or default
-    const imageOrder = sessionStorage.getItem('customOrder' + currentAlbumTitle) ? JSON.parse(sessionStorage.getItem('customOrder' + currentAlbumTitle)) : imagesData;
-    imageOrder.forEach(image => {
-        const listItem = document.createElement('div');
-        listItem.textContent = image.Title;
-        listItem.setAttribute('data-id', image.Image_Id);
-        listItem.classList.add('sortable-item');
-        listContainer.appendChild(listItem);
-    });
-
-    Sortable.create(listContainer, {
-        animation: 150,
-        store: {
-            set: function(sortable) {
-                var order = sortable.toArray();
-                sessionStorage.setItem('customOrder' + currentAlbumTitle, JSON.stringify(order));
-            }
-        }
-    });
-
-    document.getElementById('saveOrderButton').style.display = 'inline-block';
-}; 
- */
+ 
  this.showReorderView = function() {
     const listContainer = document.getElementById('photoContainer');
     listContainer.innerHTML = ''; // Clear current images
@@ -371,20 +328,17 @@ function SelectedAlbum() {
     console.log("storeOrder", storedOrder);
     if (storedOrder) {
         const storedOrderIds = JSON.parse(storedOrder);
-        // Find images in imagesData by ID and ensure complete image data is used
-        imageOrder = storedOrderIds.map(id => imagesData.find(image => image.Image_Id === id)).filter(image => image);
+        console.log("Stored Image IDs:", storedOrderIds);
+        console.log("Check imagesData:", imagesData);
+        imageOrder = storedOrderIds.map(id => imagesData.find(image => image.Image_Id.toString() === id.toString())).filter(image => image);
+        console.log("Mapped Images:", imageOrder);
     } else {
         imageOrder = imagesData; // Default to initial full data set if no custom order set
     }
 
-    // Check and handle if any images could not be found (e.g., filter result is undefined)
-    if (imageOrder.includes(undefined)) {
-        console.error("Some images could not be found in the original dataset.");
-        imageOrder = imageOrder.filter(image => image !== undefined); // Remove undefined entries
-    }
+    console.log("Final Image Order:", imageOrder);
 
     imageOrder.forEach(image => {
-    	console.log(image);
         const listItem = document.createElement('div');
         listItem.textContent = image.Title; // Ensure titles are used
         listItem.setAttribute('data-id', image.Image_Id);
@@ -404,6 +358,7 @@ function SelectedAlbum() {
 
     document.getElementById('saveOrderButton').style.display = 'block';
 };
+
 
    
 
