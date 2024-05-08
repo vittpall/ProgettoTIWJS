@@ -471,7 +471,7 @@ function SelectedAlbum() {
     });
 
     commentsContainer.appendChild(commentList);
-
+	console.log("riaggiorno i commenti");
     // Add the comment form
     const commentForm = createCommentForm(albumTitle, imageId, albumCreator);
     commentsContainer.appendChild(commentForm);
@@ -497,8 +497,11 @@ function createCommentForm(albumTitle, imageId, albumCreator) {
     imageIdInput.name = 'imageId';
     imageIdInput.value = imageId;
     
+    console.log("utente"+sessionStorage.getItem("username"));
+    console.log(albumCreator)
     if(albumCreator == sessionStorage.getItem("username"))
     {
+		console.log("bottone per cancellare")
 		var removeImageCommentButton = document.createElement('button');
     	removeImageCommentButton.textContent = 'Remove Image';
     	removeImageCommentButton.type = 'submit';
@@ -514,7 +517,7 @@ function createCommentForm(albumTitle, imageId, albumCreator) {
     addButton.type = 'submit';
     addButton.addEventListener('click', function(event) {
         event.preventDefault();
-        handleAddComment(commentForm, commentInput, albumTitle, imageId);
+        handleAddComment(commentForm, commentInput, albumTitle, imageId, albumCreator);
     });
 
     commentForm.appendChild(commentInput);
@@ -546,7 +549,7 @@ function handleRemoveImage(albumTitle, imageId)
 			}, false)
 }
 
-function handleAddComment(commentForm, commentInput, albumTitle, imageId) {
+function handleAddComment(commentForm, commentInput, albumTitle, imageId, albumCreator) {
     const newComment = commentInput.value.trim();
     if (newComment === '') {
         alert('Comment cannot be empty!');
@@ -559,16 +562,15 @@ function handleAddComment(commentForm, commentInput, albumTitle, imageId) {
                 console.log(updatedComments);
                // updateImageComments(imageId, updatedComments);
                // const image = findImageById(imageId);
-                
-                displayComments(updatedComments, albumTitle, imageId);
+                displayComments(updatedComments, albumTitle, imageId, albumCreator);
                 commentInput.value = '';  // Clear the input field
                 // Refresh the album details to simulate coming from selecting an album
-                selectedAlbum.show(albumTitle, sessionStorage.getItem('albumCreator'));
+                //selectedAlbum.show(albumTitle, sessionStorage.getItem('albumCreator'));
             } else {
                 alert("Failed to add comment: " + req.statusText);
             }
         }
-    }, false);
+    }, true);
 }
 /*
 function updateImageComments(imageId, newComments) {
