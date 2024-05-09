@@ -26,12 +26,8 @@ function UserWelcomeMessage(username, usernameContainer)
 }
 
 
-
-//TODO can be converted to a class declaration
 function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbumForm)
 {
-	//this attributes will be initi when thhe pageOrchestrator calls stars on itself
-	//can i call the attributes without usign the orchestrator?
 	this.alert = alert;
 	this.userAlbum = userAlbumContainer;
 	this.otherAlbum = otherAlbumContainer;
@@ -61,11 +57,8 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 					otherAlbumToShow = responseData.otherUserAlbumJson;
 					userImages = responseData.imageUserJson;
 					self.populateForm(userImages);
-					//console.log(userImages);
-					//imageUserToShow = responseData.imageUserJson;
 				}
 				console.log(otherAlbumToShow)
-				//allImages = responseData.imageUserJson; // Assuming this is where images are fetched
 				self.updateAlbum(userAlbumToShow, self.userAlbum);
 				self.updateOtherAlbum(otherAlbumToShow, self.otherAlbum);
 				self.populateForm(userImages);
@@ -635,7 +628,6 @@ function logout(){
 
 function PageOrchestrator()
 {
-	//initi the different parts of the page
 	this.start = function(){
 		userWelcomeMessage = new UserWelcomeMessage(sessionStorage.getItem('username'), document.getElementById('usernameContainer'));
         userWelcomeMessage.show();
@@ -643,20 +635,12 @@ function PageOrchestrator()
 		allAlbumToShow.show();
 		backToHomePage();
 		logout();
-
-		
-	//	userAlbum = new UserAlbum();
-	//	otherAlbum = new OtherAlbum();
-		// i want to retrieve al the information from the selectedAlbum
-	//	albumCreationForm = new albumCreationForm();
 		selectedAlbum = new SelectedAlbum();
-
-
+	
 	}
 	
 	this.refresh = function(albumTitle){
 		allAlbumToShow.show();
-	//	allAlbumToShow.autoclick(albumTitle);
 		allAlbumToShow.refreshAlbums();
 	}
 	
