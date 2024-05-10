@@ -1,4 +1,4 @@
-package it.Polimi.ProgettoTIWJS.model;
+package it.Polimi.ProgettoTIWJS.controllers;
 
 
 import it.Polimi.ProgettoTIWJS.dao.CommentDAO;

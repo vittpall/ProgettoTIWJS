@@ -1,4 +1,4 @@
-package it.Polimi.ProgettoTIWJS.model;
+package it.Polimi.ProgettoTIWJS.controllers;
 
 import java.io.IOException;
 import java.sql.SQLException;
