@@ -120,8 +120,10 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 		        anchor.setAttribute("albumTitle", album.Title);
 		        anchor.addEventListener("click", function() {
 		        	console.log("Album Creator:", album.User_id); 
-					var newSelected = new SelectedAlbum();
-					newSelected.show(album.Title, album.User_id);
+					//var newSelected = new SelectedAlbum();
+					//newSelected.show(album.Title, album.User_id);
+					selectedAlbum.show(album.Title, album.User_id);
+
 	        });
 	
 	        listItem.appendChild(anchor);
@@ -154,8 +156,9 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	            anchor.setAttribute("albumTitle", album.Title);
 	            anchor.addEventListener("click", function() {
 	                console.log("Album Creator:", username);
-	                var newSelected = new SelectedAlbum();
-	                newSelected.show(album.Title, album.User_id);
+	                //var newSelected = new SelectedAlbum();
+	                //newSelected.show(album.Title, album.User_id);
+	                selectedAlbum.show(album.Title, username);
 	            });
 	
 	            listItem.appendChild(anchor);
@@ -251,6 +254,7 @@ function SelectedAlbum() {
 		// Update sessionStorage with current album creator
         sessionStorage.setItem('albumCreator', albumCreator);
         sessionStorage.setItem('currentAlbumTitle', albumTitle);
+        
 		// Hide album sections and show image details
 		document.getElementById('albumSection').style.display = 'none';
 		document.getElementById('imageDetailsSection').style.display = 'block';
@@ -533,7 +537,7 @@ function handleRemoveImage(albumTitle, imageId)
 					if (req.status == 200) {
 						selectedAlbum.show(albumTitle, sessionStorage.getItem("albumCreator"));
 						selectedAlbum.closeModal();
-						allAlbumToShow.show();
+						//allAlbumToShow.show();
 					}
 					
 				} else if (req.status == 403) {
@@ -559,7 +563,8 @@ function handleAddComment(commentForm, commentInput, albumTitle, imageId, albumC
                 displayComments(updatedComments, albumTitle, imageId, albumCreator);
                 commentInput.value = '';  // Clear the input field
                 // Refresh the album details to simulate coming from selecting an album
-                //selectedAlbum.show(albumTitle, sessionStorage.getItem('albumCreator'));
+                console.log(albumCreator);
+                selectedAlbum.show(sessionStorage.getItem("currentAlbumTitle"), albumCreator);
             } else {
                 alert("Failed to add comment: " + req.statusText);
             }
