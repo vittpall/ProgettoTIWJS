@@ -42,16 +42,18 @@
         </section>
 
         <section id="imageDetailsSection" style="display:none;">
-            <div id="photoContainer"></div> <!-- Container for photos -->
-            
-            <button id="prevButton" disabled>Previous</button>
-            <button id="nextButton" disabled>Next</button>
-            <button id="reorderButton">Reorder Images</button>
-			<button id="saveOrderButton" style="display:none;">Save Images Order</button>
-            
-        </section>
+    <div class="gallery-navigation">
+        <button id="prevButton" disabled>Previous</button>
+        <div id="photoContainer" style="display: flex; align-items: center; justify-content: center; flex-grow: 1;">
+            <!-- Images will be dynamically inserted here -->
+        </div>
+        <button id="nextButton" disabled>Next</button>
+    </div>
+    <button id="reorderButton">Reorder Images</button>
+    <button id="saveOrderButton" style="display:none;">Save Images Order</button>
+</section>
         
-        <div>
+        
         <button id="backToHomePage" style="display:none;">GoBack</button>
         </div>
 

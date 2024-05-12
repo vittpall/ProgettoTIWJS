@@ -158,7 +158,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 	                console.log("Album Creator:", username);
 	                //var newSelected = new SelectedAlbum();
 	                //newSelected.show(album.Title, album.User_id);
-	                selectedAlbum.show(album.Title, username);
+	                selectedAlbum.show(album.Title, album.User_id);
 	            });
 	
 	            listItem.appendChild(anchor);

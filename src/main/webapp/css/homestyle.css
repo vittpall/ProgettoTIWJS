@@ -37,13 +37,22 @@ h1, h2, h3 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Photo container and thumbnail styles */
+#photoContainer {
+    display: flex; /* Flex container for photos and buttons */
+    justify-content: space-between; /* Space between elements */
+    align-items: center; /* Align elements vertically */
+    width: 100%; /* Full width */
+}
+
 .photo-thumbnail {
-    width: 100px;
-    height: auto;
+    width: 100px; /* Fixed width */
+    height: auto; /* Maintain aspect ratio */
     cursor: pointer;
     margin: 5px;
     border-radius: 4px;
     transition: transform 0.2s;
+    flex: 1 0 auto; /* Flexibility in growing */
 }
 
 .photo-thumbnail:hover {
@@ -97,6 +106,15 @@ h1, h2, h3 {
 }
 
 /* Comment Styles */
+#commentsContainer {
+    max-height: 225px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 #commentsContainer ul {
     padding-left: 0;
 }
@@ -109,14 +127,6 @@ textarea, input[type="text"], input[type="file"], button {
     border-radius: 4px;
     box-sizing: border-box;
 }
-#commentsContainer {
-    max-height: 225px; /* Set a maximum height */
-    overflow-y: auto; /* Enable vertical scrolling */
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
 button {
     background-color: #0056b3;
@@ -124,6 +134,7 @@ button {
     border: none;
     cursor: pointer;
     transition: background-color 0.2s;
+    padding: 10px 20px; /* Consistent padding for buttons */
 }
 
 button:hover {
@@ -138,4 +149,10 @@ button:disabled {
 
 button:disabled:hover {
     background-color: #ccc; /* Keeps the same background color when hovered */
+}
+
+#imageDetailsSection > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
