@@ -288,17 +288,29 @@ function SelectedAlbum() {
 	this.update = function (imagesCommentToShow, startIndex) {
 		const photoContainer = document.getElementById('photoContainer');
 		photoContainer.innerHTML = '';
-		for (let i = startIndex; i < startIndex + 5 && i < imagesCommentToShow.length; i++) {
-			const image = imagesCommentToShow[i];
-			const photoElement = document.createElement('img');
-			currentImageId = image.Image_Id;  // Update current image ID
-			photoElement.src = "/ProgettoTIWJS" + image.System_Path;
-			photoElement.setAttribute('data-id', image.Image_Id); // Ensure each image has an ID for reordering
-			console.log(photoElement.src);
-			photoElement.classList.add('photo-thumbnail');
-			//photoElement.onclick = () => this.showModal(image);
-			photoElement.addEventListener("mouseover", () => this.showModal(image)); // Changed to 'mouseover'
-			photoContainer.appendChild(photoElement);
+		for (let i = startIndex; i < startIndex + 5 ; i++) {
+			if(i < imagesCommentToShow.length)
+			{
+				const image = imagesCommentToShow[i];
+				const photoElement = document.createElement('img');
+				currentImageId = image.Image_Id;  // Update current image ID
+				photoElement.src = "/ProgettoTIWJS" + image.System_Path;
+				photoElement.setAttribute('data-id', image.Image_Id); // Ensure each image has an ID for reordering
+				console.log(photoElement.src);
+				photoElement.classList.add('photo-thumbnail');
+				//photoElement.onclick = () => this.showModal(image);
+				photoElement.addEventListener("mouseover", () => this.showModal(image)); // Changed to 'mouseover'
+				photoContainer.appendChild(photoElement);
+			}
+			else
+			{
+				console.log("immagine vuota	")
+				const fillPhoto = document.createElement("img");
+				fillPhoto.classList.add('photo-thumbnail');
+				photoContainer.appendChild(fillPhoto);
+			
+			}
+	
 		}
 		// Update buttons visibility based on data length
 		const prevButton = document.getElementById('prevButton');
@@ -470,7 +482,9 @@ function SelectedAlbum() {
     }
     comments.forEach(comment => {
         const listItem = document.createElement('li');
-        listItem.textContent = comment.Text;
+        console.log(comment);
+        listItem.textContent = comment.username + ":" + comment.Text;
+        
         commentList.appendChild(listItem);
     });
 

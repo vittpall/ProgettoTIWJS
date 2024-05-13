@@ -28,6 +28,7 @@ import it.Polimi.ProgettoTIWJS.beans.Comment;
 
 import it.Polimi.ProgettoTIWJS.dao.CommentDAO;
 import it.Polimi.ProgettoTIWJS.dao.ImageDAO;
+import it.Polimi.ProgettoTIWJS.dao.UserDAO;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -89,7 +90,13 @@ public class AddComment extends HttpServlet {
            
             commentDao.addComment(comment); 
             
+            UserDAO userDao = new UserDAO(connection);
+            
             List<Comment> updatedComments = commentDao.findCommentsByImage(imageId);
+            for(Comment com: updatedComments)
+            {
+            	com.setUsername(userDao.getUsernameById(com.getUser_id()));
+            }
             // Convert the Comment object to JSON
             Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
             String jsonComment = gson.toJson(updatedComments);
@@ -110,6 +117,7 @@ public class AddComment extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	//consider that i cannot retriever userId from the image id
+    	System.out.println("cancella foto");
     	ImageDAO imageDao = new ImageDAO(connection);
     	CommentDAO commentsDao = new CommentDAO(connection);
     	String albumTitle = StringEscapeUtils.escapeJava(request.getParameter("albumTitle"));

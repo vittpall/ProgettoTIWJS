@@ -8,6 +8,17 @@ public class Comment {
     private Integer Id;
     private LocalDateTime Publication_date;
     private String Text;
+    private String username;
+    
+    public void setUsername(String username)
+    {
+    	this.username = username;
+    }
+    
+    public String getUsername()
+    {
+    	return this.username;
+    }
     
     
     public void setText(String Text)

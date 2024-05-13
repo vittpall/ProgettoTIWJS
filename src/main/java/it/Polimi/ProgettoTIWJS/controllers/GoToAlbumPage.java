@@ -3,6 +3,7 @@ package it.Polimi.ProgettoTIWJS.controllers;
 
 import it.Polimi.ProgettoTIWJS.dao.CommentDAO;
 import it.Polimi.ProgettoTIWJS.dao.ImageDAO;
+import it.Polimi.ProgettoTIWJS.dao.UserDAO;
 import it.Polimi.ProgettoTIWJS.Utils.ConnectionHandler;
 import it.Polimi.ProgettoTIWJS.beans.Comment;
 import it.Polimi.ProgettoTIWJS.beans.Image;
@@ -80,7 +81,8 @@ public class GoToAlbumPage extends HttpServlet {
         }
         
         
-        
+        String userCreator;
+        UserDAO userDao = new UserDAO(connection);
         List<Map<String, Object>> albumData = new ArrayList<>();
         CommentDAO commentDao = new CommentDAO(connection);
         try {
@@ -93,6 +95,11 @@ public class GoToAlbumPage extends HttpServlet {
                 imageData.put("Description", image.getDescription());
                 
                 List<Comment> comments = commentDao.findCommentsByImage(image.getImage_Id());
+                for(Comment comment: comments)
+                {
+                	comment.setUsername(userDao.getUsernameById(comment.getUser_id()));
+                }
+                //userCreator = imageDao.CheckCreator(image.getImage_Id());
                 imageData.put("Comments", comments);
 
                 albumData.add(imageData);
@@ -105,7 +112,7 @@ public class GoToAlbumPage extends HttpServlet {
         
 
         // Convert the map to JSON
-        String jsonResponse = new Gson().toJson(albumData);
+      //  String jsonResponse = new Gson().toJson(albumData);
 
     	Gson gson = new GsonBuilder()
 				   .setDateFormat("yyyy MMM dd").create();

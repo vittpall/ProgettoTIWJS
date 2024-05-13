@@ -16,6 +16,23 @@ public class UserDAO {
     public UserDAO(Connection connection) {
         this.con = connection;
     }
+    
+    public String getUsernameById(int id) throws SQLException
+    {
+    	String query = "SELECT Username FROM User WHERE id = ?";
+
+        try (PreparedStatement pstatement = con.prepareStatement(query);) {
+            pstatement.setInt(1, id);
+            try (ResultSet result = pstatement.executeQuery();) {
+                if (!result.isBeforeFirst())
+                    return null;
+                else {
+                	result.next();
+                	return result.getString("Username");
+                }
+            }
+        }
+    }
 
     public User checkCredentials(String username, String password) throws SQLException {
         
