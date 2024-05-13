@@ -298,6 +298,8 @@ function SelectedAlbum() {
 			if(i < imagesCommentToShow.length)
 			{
 				const image = imagesCommentToShow[i];
+				const imageContainer = document.createElement('div');  // Container for each image and its title
+            	imageContainer.classList.add('image-container');
 				const photoElement = document.createElement('img');
 				currentImageId = image.Image_Id;  // Update current image ID
 				photoElement.src = "/ProgettoTIWJS" + image.System_Path;
@@ -305,8 +307,14 @@ function SelectedAlbum() {
 				console.log(photoElement.src);
 				photoElement.classList.add('photo-thumbnail');
 				//photoElement.onclick = () => this.showModal(image);
+				const titleElement = document.createElement('div'); // Div for title
+            	titleElement.textContent = image.Title;
+            	titleElement.classList.add('image-title');  // Apply styles for the title
 				photoElement.addEventListener("mouseover", () => this.showModal(image)); // Changed to 'mouseover'
 				photoContainer.appendChild(photoElement);
+				imageContainer.appendChild(photoElement);
+            	imageContainer.appendChild(titleElement);
+            	photoContainer.appendChild(imageContainer);
 			}
 			else
 			{
