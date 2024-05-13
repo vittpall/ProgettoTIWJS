@@ -68,7 +68,10 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 			{
 				window.location.href = "index.html";
 				windows.sessionStorage.removeItem('username');
-			}
+			}else {
+	              self.alert.textContent = responseData;
+
+	            }
 		}, true);
 	}
 	
@@ -274,7 +277,10 @@ function SelectedAlbum() {
 				} else if (req.status == 403) {
 					window.location.href = "index.html";
 					window.sessionStorage.removeItem('username');
-				}
+				} else {
+	              self.alert.textContent = req.responseText;
+
+	            }
 			})
 	}
 	
@@ -407,7 +413,7 @@ function SelectedAlbum() {
             }
         }
     }
-}, false);
+}, true);
 
 
     // Clean up by removing the form after the request
@@ -543,8 +549,11 @@ function handleRemoveImage(albumTitle, imageId)
 				} else if (req.status == 403) {
 					window.location.href = "index.html";
 					window.sessionStorage.removeItem('username');
-				}
-			}, false)
+				}else {
+	              self.alert.textContent = req.responseText;
+
+	            }
+			}, true)
 }
 
 function handleAddComment(commentForm, commentInput, albumTitle, imageId, albumCreator) {

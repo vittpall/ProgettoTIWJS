@@ -9,6 +9,7 @@ public class Comment {
     private LocalDateTime Publication_date;
     private String Text;
     
+    
     public void setText(String Text)
     {
     	this.Text = Text;
