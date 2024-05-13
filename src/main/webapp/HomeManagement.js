@@ -257,7 +257,13 @@ function SelectedAlbum() {
 		// Update sessionStorage with current album creator
         sessionStorage.setItem('albumCreator', albumCreator);
         sessionStorage.setItem('currentAlbumTitle', albumTitle);
-        
+        // Determine if the reorder button should be shown
+        let reorderButton = document.getElementById('reorderButton');
+        if (sessionStorage.getItem("username") == albumCreator) {
+            reorderButton.style.display = 'block';
+        } else {
+            reorderButton.style.display = 'none';
+        }
 		// Hide album sections and show image details
 		document.getElementById('albumSection').style.display = 'none';
 		document.getElementById('imageDetailsSection').style.display = 'block';
