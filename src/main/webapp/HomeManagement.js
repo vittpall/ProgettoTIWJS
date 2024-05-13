@@ -69,7 +69,7 @@ function AllAlbumToShow(alert, userAlbumContainer, otherAlbumContainer, addAlbum
 				window.location.href = "index.html";
 				windows.sessionStorage.removeItem('username');
 			}else {
-	              self.alert.textContent = responseData;
+	              alert.textContent = responseData;
 
 	            }
 		}, true);
@@ -278,7 +278,7 @@ function SelectedAlbum() {
 					window.location.href = "index.html";
 					window.sessionStorage.removeItem('username');
 				} else {
-	              self.alert.textContent = req.responseText;
+	              alert.textContent = req.responseText;
 
 	            }
 			})
@@ -370,8 +370,10 @@ function SelectedAlbum() {
             }
         }
     });
-
-    document.getElementById('saveOrderButton').style.display = 'block';
+	
+		document.getElementById('saveOrderButton').style.display = 'block';
+	
+    
 };
 
 
@@ -564,7 +566,7 @@ function handleRemoveImage(albumTitle, imageId)
 					window.location.href = "index.html";
 					window.sessionStorage.removeItem('username');
 				}else {
-	              self.alert.textContent = req.responseText;
+	              alert.textContent = req.responseText;
 
 	            }
 			}, true)
